@@ -1,0 +1,18 @@
+{
+  "$schema": "https://dev.office.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "qn-a-master-list-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/qnAMasterList/QnAMasterListWebPart.js",
+          "manifest": "./src/webparts/qnAMasterList/QnAMasterListWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "QnAMasterListWebPartStrings": "lib/webparts/qnAMasterList/loc/{locale}.js"
+  }
+}

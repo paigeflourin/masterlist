@@ -1,0 +1,12 @@
+{
+  "$schema": "https://dev.office.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "qn-a-master-list-client-side-solution",
+    "id": "bcae6f25-c4c5-48b7-bd6b-53cf72b6d602",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true
+  },
+  "paths": {
+    "zippedPackage": "solution/qn-a-master-list.sppkg"
+  }
+}

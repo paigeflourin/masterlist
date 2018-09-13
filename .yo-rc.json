@@ -1,0 +1,8 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "version": "1.4.1",
+    "libraryName": "qn-a-master-list",
+    "libraryId": "bcae6f25-c4c5-48b7-bd6b-53cf72b6d602",
+    "environment": "spo"
+  }
+}
