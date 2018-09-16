@@ -1,5 +1,6 @@
 /* tslint:disable */
 import * as React from 'react';
+import { sp } from "@pnp/sp";
 /* tslint:enable */
 import { BaseComponent, assign } from 'office-ui-fabric-react/lib/Utilities';
 import { IPersonaProps, Persona } from 'office-ui-fabric-react/lib/Persona';
@@ -13,35 +14,12 @@ import { PrimaryButton } from 'office-ui-fabric-react/lib/Button';
 import { IPersonaWithMenu } from 'office-ui-fabric-react/lib/components/pickers/PeoplePicker/PeoplePickerItems/PeoplePickerItem.types';
 import { people, mru } from '../../services/PeoplePickerExampleData';
 import { Promise } from 'es6-promise';
+import { IPeoplePickerState, IPeoplePickerProps } from './IPeoplePickerProps';
+import { SharePointUserPersona,IEnsurableSharePointUser } from '../../models/IPeoplePicker';
 
-export interface IPeoplePickerState {
-  currentPicker?: number | string;
-  delayResults?: boolean;
-  peopleList: IPersonaProps[];
-  mostRecentlyUsed: IPersonaProps[];
-  currentSelectedItems?: IPersonaProps[];
-}
+export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePickerState> {
 
-const suggestionProps: IBasePickerSuggestionsProps = {
-  suggestionsHeaderText: 'Suggested People',
-  mostRecentlyUsedHeaderText: 'Suggested Contacts',
-  noResultsFoundText: 'No results found',
-  loadingText: 'Loading',
-  showRemoveButtons: true,
-  suggestionsAvailableAlertText: 'People Picker Suggestions available',
-  suggestionsContainerAriaLabel: 'Suggested contacts'
-};
-
-const limitedSearchAdditionalProps: IBasePickerSuggestionsProps = {
-  searchForMoreText: 'Load all Results',
-  resultsMaximumNumber: 10,
-  searchingText: 'Searching...'
-};
-
-export class PeoplePicker extends BaseComponent<any, IPeoplePickerState> {
-  private _picker: IBasePicker<IPersonaProps>;
-
-  constructor(props: {}) {
+  constructor(props:  IPeoplePickerProps) {
     super(props);
     const peopleList: IPersonaWithMenu[] = [];
     //people is the data
@@ -61,18 +39,20 @@ export class PeoplePicker extends BaseComponent<any, IPeoplePickerState> {
     };
   }
 
+  public componentDidMount():void {
+
+  }
+
   public render() {
 
     return (
       <div>
         <NormalPeoplePicker
-            onResolveSuggestions={this._onFilterChanged}
-            onEmptyInputFocus={this._returnMostRecentlyUsed}
-            getTextFromItem={this._getTextFromItem}
-            pickerSuggestionsProps={suggestionProps}
+            onResolveSuggestions={this.onResolveSuggestions}
+            getTextFromItem={(persona: IPersonaProps) => persona.text}
             className={'ms-PeoplePicker'}
             key={'normal'}
-            onRemoveSuggestion={this._onRemoveSuggestion}
+            //onRemoveSuggestion={this._onRemoveSuggestion}
             onValidateInput={this._validateInput}
             removeButtonAriaLabel={'Remove'}
             inputProps={{
@@ -80,7 +60,6 @@ export class PeoplePicker extends BaseComponent<any, IPeoplePickerState> {
             onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
             'aria-label': 'People Picker'
             }}
-            componentRef={this._resolveRef('_picker')}
             onInputChange={this._onInputChange}
             resolveDelay={300}
         />
@@ -88,45 +67,59 @@ export class PeoplePicker extends BaseComponent<any, IPeoplePickerState> {
     );
   }
 
-  private _getTextFromItem(persona: IPersonaProps): string {
-    return persona.text as string;
+  private onResolveSuggestions(filterText: string, currentPersonas: IPersonaProps[], limitResults?: number) {
+    console.log("in onresolve suggestions");
+    if (filterText) {
+        if (filterText.length > 2) {
+            return this.search(filterText);
+        }
+    } else {
+        return [];
+    }
+  }
+  private search(term: string): Promise<SharePointUserPersona[]> {
+    term = "admin-ptangalin@CUPDev.onmicrosoft.com";
+    const queryParams = {
+        AllowEmailAddresses: true,
+        AllowMultipleEntities: false,
+        AllUrlZones: false,
+        MaximumEntitySuggestions: 5,
+        PrincipalSource: 15,
+        PrincipalType: 1,
+        QueryString: term
+    };
+
+    return new Promise<SharePointUserPersona[]>((resolve, reject) =>
+        sp.profiles.clientPeoplePickerSearchUser(queryParams)
+            .then((entries) => {
+               console.log("entries", entries);
+                if (entries.length > 0) {
+                    const persons = entries.map((p) => new SharePointUserPersona(p as IEnsurableSharePointUser));
+                    resolve(persons);
+                } else if (this.isEmail(term)) {
+                    const user: IEnsurableSharePointUser = {
+                        Key: '',
+                        EntityData: {
+                            Email: term,
+                            Title: '',
+                            Department: ''
+                        },
+                        DisplayText: term
+                    };
+                    resolve([new SharePointUserPersona(user)]);
+                } else {
+                    resolve([]);
+                }
+            }
+                , (error: any): void => {
+                    reject([]);
+                }));
   }
 
-  private _onRemoveSuggestion = (item: IPersonaProps): void => {
-    const { peopleList, mostRecentlyUsed: mruState } = this.state;
-    const indexPeopleList: number = peopleList.indexOf(item);
-    const indexMostRecentlyUsed: number = mruState.indexOf(item);
-
-    if (indexPeopleList >= 0) {
-      const newPeople: IPersonaProps[] = peopleList
-        .slice(0, indexPeopleList)
-        .concat(peopleList.slice(indexPeopleList + 1));
-      this.setState({ peopleList: newPeople });
-    }
-
-    if (indexMostRecentlyUsed >= 0) {
-      const newSuggestedPeople: IPersonaProps[] = mruState
-        .slice(0, indexMostRecentlyUsed)
-        .concat(mruState.slice(indexMostRecentlyUsed + 1));
-      this.setState({ mostRecentlyUsed: newSuggestedPeople });
-    }
-  };
-
-  private _onFilterChanged = (
-    filterText: string,
-    currentPersonas: IPersonaProps[],
-    limitResults?: number
-  ): IPersonaProps[] | Promise<IPersonaProps[]> => {
-    if (filterText) {
-      let filteredPersonas: IPersonaProps[] = this._filterPersonasByText(filterText);
-
-      filteredPersonas = this._removeDuplicates(filteredPersonas, currentPersonas);
-      filteredPersonas = limitResults ? filteredPersonas.splice(0, limitResults) : filteredPersonas;
-      return this._filterPromise(filteredPersonas);
-    } else {
-      return [];
-    }
-  };
+  private isEmail(search: string): boolean {
+    const regExp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+    return regExp.test(search);
+  } 
 
   private _returnMostRecentlyUsed = (currentPersonas: IPersonaProps[]): IPersonaProps[] | Promise<IPersonaProps[]> => {
     let { mostRecentlyUsed } = this.state;
