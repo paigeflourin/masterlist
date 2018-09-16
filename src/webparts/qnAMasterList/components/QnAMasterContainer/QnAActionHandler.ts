@@ -18,8 +18,8 @@ export class QnAActionHandler {
         return await this.service.getAllMasterListItems();
     }
 
-    public async saveMasterItemtoSPList(itemDetails: IQnAMaster): Promise<any>{
-        return await this.service.saveMasterItemtoSPList(itemDetailss)
+    public async saveMasterItemtoSPList(itemDetails: IQnAMaster, callback: Function): Promise<any>{
+        return await this.service.saveMasterItemtoSPList(itemDetails)
     };
     
     

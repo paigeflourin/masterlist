@@ -16,13 +16,15 @@
     "@microsoft/sp-office-ui-fabric-core": "^1.4.1",
     "@microsoft/sp-webpart-base": "~1.4.1",
     "@pnp/sp": "^1.2.1",
+    "@pnp/spfx-controls-react": "1.8.0",
     "@types/react": "15.6.6",
     "@types/react-dom": "15.5.6",
     "@types/webpack-env": ">=1.12.1 <1.14.0",
     "@uifabric/experiments": "^6.30.1",
     "office-ui-fabric-react": "^5.124.0",
     "react": "15.6.2",
-    "react-dom": "15.6.2"
+    "react-dom": "15.6.2",
+    "react-taxonomypicker": "0.0.42"
   },
   "devDependencies": {
     "@microsoft/sp-build-web": "~1.4.1",

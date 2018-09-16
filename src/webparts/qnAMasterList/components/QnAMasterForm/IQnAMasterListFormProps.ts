@@ -1,22 +1,23 @@
 import { SharePointUserPersona } from '../../models/IPeoplePicker';
 import { QnAActionHandler } from '../QnAMasterContainer/QnAActionHandler'; 
 import { IQnAMaster } from '../../models/IQnAMaster';
-
+import { WebPartContext } from '@microsoft/sp-webpart-base';
+import { TaxonomyPicker, IPickerTerms } from "@pnp/spfx-controls-react/lib/TaxonomyPicker";
 export interface IQnAMasterListFormProps {
-  //masterListName: string;
-  //show: boolean;
-  //onClose: () => void;
   onChange?: (items: SharePointUserPersona[]) => void;
   actionHandler: QnAActionHandler;
   editItem?: IQnAMaster;
+  context: WebPartContext;
 }
 
 
 export interface IQnAMasterListFormState {
-  division: string,
+  //termKey?: string | number;
+  division: IPickerTerms;
   divisionQnAListName: string;
-  Editors: any[],
+  Editors: any[];
   Errors: string[];
   isLoading: boolean;
+  
 
 }

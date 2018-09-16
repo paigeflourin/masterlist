@@ -13,6 +13,7 @@
   },
   "externals": {},
   "localizedResources": {
-    "QnAMasterListWebPartStrings": "lib/webparts/qnAMasterList/loc/{locale}.js"
+    "QnAMasterListWebPartStrings": "lib/webparts/qnAMasterList/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
   }
 }

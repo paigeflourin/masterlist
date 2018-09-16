@@ -1,9 +1,10 @@
+import { TaxonomyPicker, IPickerTerms } from "@pnp/spfx-controls-react/lib/TaxonomyPicker";
 export interface IQnAMaster {
     Id: String;
-    Division: string;
-    DivisionId: number;
-    DivisionListName: string;
-    Editor: any[];
+    division: IPickerTerms;
+    //DivisionId: number;
+    divisionQnAListName: string;
+    Editors: any[];
 }
 
 //export default IQnAMaster;

@@ -57,7 +57,7 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
           <h1>QnA Master List</h1>
 
           {this.state.showForm &&
-              <QnAMasterListForm actionHandler={this.actionHandler} />
+              <QnAMasterListForm context={this.props.context} actionHandler={this.actionHandler} />
           }
          
             <PrimaryButton 
