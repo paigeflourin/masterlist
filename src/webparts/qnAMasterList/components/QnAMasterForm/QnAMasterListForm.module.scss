@@ -1,6 +1,15 @@
 @import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
-.qnAMasterList {
+
+
+
+.qnAMasterList {  
+  .qnaMasterForm {
+    padding: 10px;
+  }
+  
+
+
   .container {
     max-width: 700px;
     margin: 0px auto;

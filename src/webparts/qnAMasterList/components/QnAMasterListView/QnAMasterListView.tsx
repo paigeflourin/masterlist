@@ -1,25 +1,22 @@
 import * as React from 'react';
-import styles from './QnAMasterList.module.scss';
-import { IQnAMasterListProps } from './IQnAMasterListProps';
+import styles from './QnAMasterListView.module.scss';
+import { IQnAMasterListViewProps } from './IQnAMasterListViewProps';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { PrimaryButton } from 'office-ui-fabric-react/lib/Button';
-import { Form, FormTextInput } from '@uifabric/experiments/lib/Form';
-
-export default class QnAMasterList extends React.Component<IQnAMasterListProps, {}> {
+import { Dropdown, BaseExtendedPeoplePicker, Spinner, TextField } from 'office-ui-fabric-react/lib/';
 
 
+export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, {}> {
 
 
-  public render(): React.ReactElement<IQnAMasterListProps> {
+  public render(): React.ReactElement<IQnAMasterListViewProps> {
     return (
       <div className={ styles.qnAMasterList }>
         <div className={ styles.container }>
-
-          <Form onSubmit={this._onSubmit}>
-            <FormTextInput textFieldProps={{ label: 'QnA List Name' }} inputKey="QnAListName" />
-            <PrimaryButton>Submit</PrimaryButton>
-          </Form>
-
+            <div>
+              <p>THIS IS WHERE TEH TABLE SHOULD BE</p>
+            </div>
+          
           {/* <div className={ styles.row }>
             <div className={ styles.column }>
               <span className={ styles.title }>Welcome to SharePoint!</span>
@@ -35,9 +32,5 @@ export default class QnAMasterList extends React.Component<IQnAMasterListProps, 
       </div>
     );
   }
-
-  private _onSubmit = (values: { [key: string]: any }): void => {
-    this.setState({ formResults: values });
-  };
 
 }

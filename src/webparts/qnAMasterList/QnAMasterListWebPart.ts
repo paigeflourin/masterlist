@@ -8,22 +8,31 @@ import {
 } from '@microsoft/sp-webpart-base';
 
 import * as strings from 'QnAMasterListWebPartStrings';
-import QnAMasterList from './components/QnAMasterList';
-import { IQnAMasterListProps } from './components/IQnAMasterListProps';
+import { QnAMasterListContainer } from './components/QnAMasterContainer/QnAMasterListContainer';
+import { IQnAMasterListContainerProps } from './components/QnAMasterContainer/IQnAMasterListContainerProps';
+import { IQnAMasterListService } from './services/IQnAMasterListService';
+import { QnAMasterListService } from './services/QnAMasterListService';
+
 
 export interface IQnAMasterListWebPartProps {
   description: string;
   masterListName: string;
+  //numberOfItems: number;
 }
 
 export default class QnAMasterListWebPart extends BaseClientSideWebPart<IQnAMasterListWebPartProps> {
+  private service: IQnAMasterListService;
 
+  protected onInit(): Promise<void> {
+      this.service = new QnAMasterListService(this.properties.masterListName, this.context);
+      return super.onInit();
+  }
   public render(): void {
-    const element: React.ReactElement<IQnAMasterListProps > = React.createElement(
-      QnAMasterList,
+    const element: React.ReactElement<IQnAMasterListContainerProps > = React.createElement(
+      QnAMasterListContainer,
       {
-        description: this.properties.description,
-        masterListName: this.properties.masterListName
+        masterListName: this.properties.masterListName,
+        service: this.service
       }
     );
 
