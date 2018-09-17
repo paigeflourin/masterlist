@@ -18,7 +18,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
         this.onSaveClick = this.onSaveClick.bind(this);
         this.setLoading = this.setLoading.bind(this);
         this.onSaveCallback = this.onSaveCallback.bind(this);
-        this.updateFormDataState = this.updateFormDataState.bind(this);
+        //this.updateFormDataState = this.updateFormDataState.bind(this);
         this.validateFormData = this.validateFormData.bind(this);
         this.onTaxPickerChange = this.onTaxPickerChange.bind(this);
         if (!this.props.editItem) {
@@ -97,11 +97,18 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
     this.setLoading(false);
   }
 
-  private updateFormDataState(prop: any, event) {
+  private updateFormDataStateFabric(prop: any, event) {
+    console.log("updateformdatastate!", event);
     this.setState({
-      [prop]: event.target.value
+      [prop]: event
     });
   }
+
+  private updateFormDataState(prop: any, event) {
+    this.setState({
+        [prop]: event.target.value
+    });
+}
   private onTaxPickerChange(terms : IPickerTerms) {
     console.log("Terms", terms);
     this.setState({
@@ -113,7 +120,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
     return (
       <div className={ styles.qnAMasterList }>
         <div className={ styles.container }>
-          <div className={styles.qnaMasterForm}>
+         
                 {/* <Dropdown
                   placeHolder="Select an Option"
                   label="Division"
@@ -152,11 +159,12 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
               <PeoplePicker 
                  placeholder='Enter email addresses here'
                  selectedItems={this.state.Editors}
-                 onChange={(value) => this.updateFormDataState('Editors', value)}
+                 onChange={(value) => this.updateFormDataStateFabric('Editors', value)}
               />
+
               <PrimaryButton text="Sumbit" onClick={this.onSaveClick} />
             
-            </div>
+        
         </div>
       </div>
     );

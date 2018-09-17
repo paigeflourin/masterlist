@@ -8,6 +8,7 @@ export interface IQnAMasterListFormProps {
   actionHandler: QnAActionHandler;
   editItem?: IQnAMaster;
   context: WebPartContext;
+  onClick?: void;
 }
 
 
@@ -15,7 +16,7 @@ export interface IQnAMasterListFormState {
   //termKey?: string | number;
   division: IPickerTerms;
   divisionQnAListName: string;
-  Editors: any[];
+  Editors: SharePointUserPersona[];
   Errors: string[];
   isLoading: boolean;
   

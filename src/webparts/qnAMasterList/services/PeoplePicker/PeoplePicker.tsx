@@ -17,26 +17,21 @@ import { Promise } from 'es6-promise';
 import { IPeoplePickerState, IPeoplePickerProps } from './IPeoplePickerProps';
 import { SharePointUserPersona,IEnsurableSharePointUser } from '../../models/IPeoplePicker';
 
+
+const suggestionProps: IBasePickerSuggestionsProps = {
+  suggestionsHeaderText: 'Suggested People',
+  noResultsFoundText: 'No results found',
+  loadingText: 'Loading'
+};
+
+
 export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePickerState> {
 
   constructor(props:  IPeoplePickerProps) {
     super(props);
     const peopleList: IPersonaWithMenu[] = [];
-    //people is the data
-    people.forEach((persona: IPersonaProps) => {
-      const target: IPersonaWithMenu = {};
-
-      assign(target, persona);
-      peopleList.push(target);
-    });
-
-    this.state = {
-      currentPicker: 1,
-      delayResults: false,
-      peopleList: peopleList,
-      mostRecentlyUsed: mru,
-      currentSelectedItems: []
-    };
+    this.onChange = this.onChange.bind(this);
+    this.onResolveSuggestions = this.onResolveSuggestions.bind(this);
   }
 
   public componentDidMount():void {
@@ -52,15 +47,20 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
             getTextFromItem={(persona: IPersonaProps) => persona.text}
             className={'ms-PeoplePicker'}
             key={'normal'}
-            //onRemoveSuggestion={this._onRemoveSuggestion}
             onValidateInput={this._validateInput}
             removeButtonAriaLabel={'Remove'}
-            inputProps={{
-            onBlur: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onBlur called'),
-            onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
-            'aria-label': 'People Picker'
-            }}
+            selectedItems={this.props.selectedItems}
+            inputProps={
+                { placeholder: this.props.placeholder }
+            }
+            // inputProps={{
+            // onBlur: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onBlur called'),
+            // onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
+            // 'aria-label': 'People Picker'
+            // }}
+            pickerSuggestionsProps={suggestionProps}
             onInputChange={this._onInputChange}
+            onChange={this.onChange}
             resolveDelay={300}
         />
       </div>
@@ -68,7 +68,8 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
   }
 
   private onResolveSuggestions(filterText: string, currentPersonas: IPersonaProps[], limitResults?: number) {
-    console.log("in onresolve suggestions");
+    console.log("in onresolve suggestions", filterText);
+
     if (filterText) {
         if (filterText.length > 2) {
             return this.search(filterText);
@@ -78,7 +79,8 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
     }
   }
   private search(term: string): Promise<SharePointUserPersona[]> {
-    term = "admin-ptangalin@CUPDev.onmicrosoft.com";
+    console.log("search", term);
+    //term = "admin-ptangalin@CUPDev.onmicrosoft.com";
     const queryParams = {
         AllowEmailAddresses: true,
         AllowMultipleEntities: false,
@@ -108,12 +110,21 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
                     };
                     resolve([new SharePointUserPersona(user)]);
                 } else {
+                  console.log("error");
                     resolve([]);
                 }
             }
                 , (error: any): void => {
+                    console.log(error);
                     reject([]);
                 }));
+
+  }
+
+  private onChange(items: any[]) {
+    if (this.props.onChange) {
+        this.props.onChange(items);
+    }
   }
 
   private isEmail(search: string): boolean {
@@ -121,11 +132,6 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
     return regExp.test(search);
   } 
 
-  private _returnMostRecentlyUsed = (currentPersonas: IPersonaProps[]): IPersonaProps[] | Promise<IPersonaProps[]> => {
-    let { mostRecentlyUsed } = this.state;
-    mostRecentlyUsed = this._removeDuplicates(mostRecentlyUsed, currentPersonas);
-    return this._filterPromise(mostRecentlyUsed);
-  };
 
   private _filterPromise(personasToReturn: IPersonaProps[]): IPersonaProps[] | Promise<IPersonaProps[]> {
     if (this.state.delayResults) {
@@ -135,16 +141,6 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
     }
   }
 
-  private _listContainsPersona(persona: IPersonaProps, personas: IPersonaProps[]) {
-    if (!personas || !personas.length || personas.length === 0) {
-      return false;
-    }
-    return personas.filter(item => item.text === persona.text).length > 0;
-  }
-
-  private _filterPersonasByText(filterText: string): IPersonaProps[] {
-    return this.state.peopleList.filter(item => this._doesTextStartWith(item.text as string, filterText));
-  }
 
   private _doesTextStartWith(text: string, filterText: string): boolean {
     return text.toLowerCase().indexOf(filterText.toLowerCase()) === 0;
@@ -154,9 +150,6 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
     return new Promise<IPersonaProps[]>((resolve, reject) => setTimeout(() => resolve(results), 2000));
   }
 
-  private _removeDuplicates(personas: IPersonaProps[], possibleDupes: IPersonaProps[]) {
-    return personas.filter(persona => !this._listContainsPersona(persona, possibleDupes));
-  }
 
   private _validateInput = (input: string): ValidationState => {
     if (input.indexOf('@') !== -1) {

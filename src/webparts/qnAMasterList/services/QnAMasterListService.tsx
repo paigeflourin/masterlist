@@ -3,7 +3,7 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { SPHttpClient, HttpClient, HttpClientResponse } from '@microsoft/sp-http';
 import { IQnAMasterListService } from './IQnAMasterListService';
 import { IQnAMaster } from '../models/IQnAMaster';
-import { Web } from '@pnp/sp';
+import { sp } from '@pnp/sp';
 
 export class QnAMasterListService  implements IQnAMasterListService {
     private listName: string;
@@ -16,8 +16,14 @@ export class QnAMasterListService  implements IQnAMasterListService {
         this.context = webPartContext;
     }
 
+    getAllMasterListItems(): Promise<any>{
+        return sp.web.lists.getByTitle(this.listName).items.select("Title", "ID", "Division", "QnAListName", "Editors").
+        expand("Editors", "Division").get().then((response) => {
+              console.log(response);
+              return response;
+        });
+    };
 
-    getAllMasterListItems: () => Promise<any>;
     saveMasterItemtoSPList: (itemDetails: IQnAMaster) => Promise<any>;
     getAllDivisionLists: () => Promise<any>;
     getAllSharePointGroups: () => Promise<any>;

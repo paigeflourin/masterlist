@@ -38,36 +38,38 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
   }
 
   public async componentDidMount(): Promise<void> {
-    this.setState({
-      masterListItems: await this.actionHandler.getAllMasterListItems(),
-        isDataLoaded: true,
-    });
+    // this.setState({
+    //   masterListItems: await this.actionHandler.getAllMasterListItems(),
+    //     isDataLoaded: true,
+    // });
   }
 
-  public toggleFormView(): void { 
-    this.setState({ showForm: true});
+  public toggleFormView(val: boolean): void { 
+    console.log(val, "toggleform");
+    this.setState({ showForm: val });
   }
 
   public render(): React.ReactElement<IQnAMasterListContainerProps> {
+    
     return (
       <div className={ styles.qnAMasterList }>
         <div className={ styles.container }>
           
 
-          <h1>QnA Master List</h1>
+          {/* <h1>QnA Master List</h1> */}
+          {/* {console.log(this.state.showForm, "show form ")}
+          {this.state.showForm ? ( */}
+            <QnAMasterListForm context={this.props.context} actionHandler={this.actionHandler}/>
+          {/* ) : (
+            <div> 
+              <PrimaryButton 
+                  text="Add QnA Master List Item" 
+                  onClick={() => this.toggleFormView(true)} 
+              />
+              <QnAMasterListView masterListItems={this.state.masterListItems} changeView={this.changeView} actionHandler={this.actionHandler} />
 
-          {this.state.showForm &&
-              <QnAMasterListForm context={this.props.context} actionHandler={this.actionHandler} />
-          }
-         
-            <PrimaryButton 
-                      text="Add QnA Master List Item" 
-                      onClick={this.toggleFormView} 
-            />
-            <QnAMasterListView masterListItems={this.state.masterListItems} changeView={this.changeView} actionHandler={this.actionHandler} />
-          
-          
-          
+            </div>
+          )} */}
         </div>
       </div>
     );
