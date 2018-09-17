@@ -29,7 +29,6 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
               Editors: [],
               Errors: [],
               isLoading: false,
-              
             };
         } else {
             this.isEdit = true;
@@ -101,12 +100,13 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
     console.log("updateformdatastatefabric!", event);
     this.setState({
       [prop]: event
-    });
+    })
   }
 
-  private updateFormDataState(prop: any, event) {
+  private updateFormDataState(someting, event) {
+    // console.log("list name", someting);
     this.setState({
-        [prop]: event.target.value
+      [someting]: event
     });
 }
   private onTaxPickerChange(terms : IPickerTerms) {
@@ -120,23 +120,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
     return (
       <div className={ styles.qnAMasterList }>
         <div className={ styles.container }>
-         
-                {/* <Dropdown
-                  placeHolder="Select an Option"
-                  label="Division"
-                  id="qnaDivion"
-                  options={[
-                    { key: 'Admission', text: 'Admission', title: 'I am option a.' },
-                    { key: 'CIT', text: 'CIT' },
-                    { key: 'RegistrarsOffice', text: 'Registrars Office' },
-                    { key: 'Finance', text: 'Finance' },
-                  ]}
-                // onFocus={this._log('onFocus called')}
-                  //onBlur={this._log('onBlur called')}
-                  //value={this.state.division}
-              /> */}
-
-
+      
               <TaxonomyPicker
                 allowMultipleSelections={false}
                 termsetNameOrID="9a72c139-d649-4342-970f-a53fe0ef72e3"
@@ -152,15 +136,15 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
                     placeholder="I am required." 
                     id="divListName"
                     label="Division QnA List Name"
-                    //value={this.state.divisionListName}
-                    onChange={(event) => this.updateFormDataState('divisionQnAListName', event)}
+                    value={this.state.divisionQnAListName}
+                    onChanged={(event) => this.updateFormDataState("divisionQnAListName",event)}
               />
               <Label>Editors</Label>
-              <PeoplePicker 
+              { <PeoplePicker 
                  placeholder='Enter email addresses here'
                  selectedItems={this.state.Editors}
                  onChange={(value) => this.updateFormDataStateFabric('Editors', value)}
-              />
+              /> }
 
               <PrimaryButton text="Sumbit" onClick={this.onSaveClick} />
             

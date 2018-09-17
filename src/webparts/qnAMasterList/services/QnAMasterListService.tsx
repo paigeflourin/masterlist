@@ -25,7 +25,13 @@ export class QnAMasterListService  implements IQnAMasterListService {
     };
 
     saveMasterItemtoSPList: (itemDetails: IQnAMaster) => Promise<any>;
-    getAllDivisionLists: () => Promise<any>;
+    
+    getAllDivisionLists(): Promise<any>{
+        return sp.web.lists.select("Title").get().then(lists => {
+            console.log(lists);
+            return lists;
+        })
+    };
     getAllSharePointGroups: () => Promise<any>;
     createDivisionList: () => Promise<any>;
     createListFields: (listname: string) => Promise<any>;
