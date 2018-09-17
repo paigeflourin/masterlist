@@ -98,7 +98,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
   }
 
   private updateFormDataStateFabric(prop: any, event) {
-    console.log("updateformdatastate!", event);
+    console.log("updateformdatastatefabric!", event);
     this.setState({
       [prop]: event
     });
