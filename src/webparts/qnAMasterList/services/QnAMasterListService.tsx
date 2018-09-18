@@ -32,7 +32,14 @@ export class QnAMasterListService  implements IQnAMasterListService {
             return lists;
         })
     };
-    getAllSharePointGroups: () => Promise<any>;
+
+    getAllSharePointGroups(): Promise<any> {
+        return sp.web.siteGroups.get().then(groups => {
+            console.log(groups);
+            return groups;
+        })
+    };
+
     createDivisionList: () => Promise<any>;
     createListFields: (listname: string) => Promise<any>;
     addFieldsToView: (listId: string, fieldsToAdd: any[]) => Promise<any>;
