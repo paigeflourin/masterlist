@@ -12,14 +12,10 @@ import { QnAMasterListContainer } from './components/QnAMasterContainer/QnAMaste
 import { IQnAMasterListContainerProps } from './components/QnAMasterContainer/IQnAMasterListContainerProps';
 import { IQnAMasterListService } from './services/IQnAMasterListService';
 import { QnAMasterListService } from './services/QnAMasterListService';
-import * as MockQnAServiceImport from './services/MockService';
-let MockQnAService: typeof MockQnAServiceImport;
-if (DEBUG) {
-  MockQnAService = require('./services/MockService');
-}
+
 export interface IQnAMasterListWebPartProps {
   description: string;
-  masterListName: string;
+  masterListname: string;
   //numberOfItems: number;
 }
 
@@ -28,12 +24,12 @@ export default class QnAMasterListWebPart extends BaseClientSideWebPart<IQnAMast
 
   protected onInit(): Promise<void> {
     console.log("here", Environment.type);
-    if (Environment.type === EnvironmentType.Local) {
-      console.log("environment is local");
-      this.service = new MockQnAService.MockService(null);
-    } else {
-      this.service = new QnAMasterListService(this.properties.masterListName, this.context);
-    }
+    //if (Environment.type === EnvironmentType.Local) {
+    //  console.log("environment is local");
+    //  this.service = new MockQnAService.MockService(null);
+    //} else {
+      this.service = new QnAMasterListService(this.properties.masterListname, this.context);
+    //}
       return super.onInit();
 
       //this.service = new QnAMasterListService(this.properties.masterListName, this.context);
@@ -43,9 +39,10 @@ export default class QnAMasterListWebPart extends BaseClientSideWebPart<IQnAMast
     const element: React.ReactElement<IQnAMasterListContainerProps > = React.createElement(
       QnAMasterListContainer,
       {
-        masterListName: this.properties.masterListName,
+        masterListName: this.properties.masterListname,
         service: this.service,
-        context: this.context
+        context: this.context,
+        isConfigured: this.needsConfiguration()
       }
     );
 
@@ -79,5 +76,12 @@ export default class QnAMasterListWebPart extends BaseClientSideWebPart<IQnAMast
         }
       ]
     };
+  }
+
+
+  private needsConfiguration(): boolean {
+    console.log("needscionfig");
+    let config =  !!this.properties.masterListname;
+        return config;
   }
 }

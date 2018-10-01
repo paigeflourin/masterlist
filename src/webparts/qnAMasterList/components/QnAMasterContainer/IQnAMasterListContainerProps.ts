@@ -8,6 +8,7 @@ export interface IQnAMasterListContainerProps {
   masterListName: string;
   service: IQnAMasterListService;
   context: WebPartContext;
+  isConfigured: boolean;
 }
 
 

@@ -19,6 +19,6 @@ export interface IQnAMasterListFormState {
   Editors: SharePointUserPersona[];
   Errors: string[];
   isLoading: boolean;
-  
+  EditorsId: any[];
 
 }

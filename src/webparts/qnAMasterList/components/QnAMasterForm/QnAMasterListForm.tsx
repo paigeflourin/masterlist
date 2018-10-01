@@ -27,6 +27,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
               division: [],
               divisionQnAListName: "",
               Editors: [],
+              EditorsId: [],
               Errors: [],
               isLoading: false,
             };
@@ -37,6 +38,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
                 divisionQnAListName: this.props.editItem.divisionQnAListName,
                 Editors: this.props.editItem.Editors,
                 Errors: [],
+                EditorsId: [],
                 isLoading: false
 
             };
@@ -78,14 +80,28 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
       Id: '',
       division: this.state.division,
       divisionQnAListName: this.state.divisionQnAListName,
-      Editors: this.state.Editors
+      Editors: this.state.Editors //pass the id of the editors only
     };
 
     if (!this.isEdit) {
-        this.props.actionHandler.saveMasterItemtoSPList(formData, this.onSaveCallback);
+      console.log("form is new"); 
+        //getAllDivisionList; check if the division list name is unique
+        //gettAllSharePointGroups; check if the group name is unique
+        //createDiviionList
+          //createListFields
+          //addFieldsToView
+        //createSharePointGroup
+          //add users to group
+          //break list permission
+          //addGroup to list
+
+
+        this.props.actionHandler.saveMasterItemtoSPList(formData, this.onSaveCallback).then();
+       
     } else {
         formData.Id = this.props.editItem.Id;
-        //this.props.actionHandler.updateMyTasks(formData, this.onSaveCallback);
+      
+
     }
   }
 
@@ -96,11 +112,12 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
     this.setLoading(false);
   }
 
-  private updateFormDataStateFabric(prop: any, event) {
+  private updateEditorsState(prop: any, event) {
     console.log("updateformdatastatefabric!", event);
+//GET THE ID OF THE USER USING EVENT EMAIL THEN SET EDITORSID STATE WITH THE iD OF THE USER
     this.setState({
       [prop]: event
-    })
+    });
   }
 
   private updateFormDataState(someting, event) {
@@ -113,7 +130,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
     console.log("Terms", terms);
     this.setState({
       division: terms
-    })
+    });
   }
 
   public render(): React.ReactElement<IQnAMasterListFormProps> {
@@ -143,7 +160,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
               { <PeoplePicker 
                  placeholder='Enter email addresses here'
                  selectedItems={this.state.Editors}
-                 onChange={(value) => this.updateFormDataStateFabric('Editors', value)}
+                 onChange={(value) => this.updateEditorsState('Editors', value)}
               /> }
 
               <PrimaryButton text="Sumbit" onClick={this.onSaveClick} />

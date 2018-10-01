@@ -42,6 +42,7 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
     //   masterListItems: await this.actionHandler.getAllMasterListItems(),
     //     isDataLoaded: true,
     // });
+    this.loadData(this.props);
   }
 
   public toggleFormView(val: boolean): void { 
@@ -56,11 +57,11 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
         <div className={ styles.container }>
           
 
-          {/* <h1>QnA Master List</h1> */}
-          {/* {console.log(this.state.showForm, "show form ")}
-          {this.state.showForm ? ( */}
+        <h1>QnA Master List</h1> 
+         {console.log(this.state.showForm, "show form ")}
+          {this.state.showForm ? ( 
             <QnAMasterListForm context={this.props.context} actionHandler={this.actionHandler}/>
-          {/* ) : (
+           ) : (
             <div> 
               <PrimaryButton 
                   text="Add QnA Master List Item" 
@@ -69,7 +70,7 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
               <QnAMasterListView masterListItems={this.state.masterListItems} changeView={this.changeView} actionHandler={this.actionHandler} />
 
             </div>
-          )} */}
+          )} 
         </div>
       </div>
     );
@@ -80,6 +81,7 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
     this.setState({
       masterListItems: await props.service.getAllItems(),
         isDataLoaded: true,
+        showForm: false
     });
   }
 

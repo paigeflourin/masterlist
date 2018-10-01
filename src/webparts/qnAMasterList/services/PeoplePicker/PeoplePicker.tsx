@@ -12,7 +12,7 @@ import {
 } from 'office-ui-fabric-react/lib/Pickers';
 import { PrimaryButton } from 'office-ui-fabric-react/lib/Button';
 import { IPersonaWithMenu } from 'office-ui-fabric-react/lib/components/pickers/PeoplePicker/PeoplePickerItems/PeoplePickerItem.types';
-import { people, mru } from '../../services/PeoplePickerExampleData';
+//import { people, mru } from '../../services/PeoplePickerExampleData';
 import { Promise } from 'es6-promise';
 import { IPeoplePickerState, IPeoplePickerProps } from './IPeoplePickerProps';
 import { SharePointUserPersona,IEnsurableSharePointUser } from '../../models/IPeoplePicker';
@@ -80,7 +80,6 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
   }
   private search(term: string): Promise<SharePointUserPersona[]> {
     console.log("search", term);
-    //term = "admin-ptangalin@CUPDev.onmicrosoft.com";
     const queryParams = {
         AllowEmailAddresses: true,
         AllowMultipleEntities: false,
@@ -104,7 +103,8 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
                         EntityData: {
                             Email: term,
                             Title: '',
-                            Department: ''
+                            Department: '',
+                          
                         },
                         DisplayText: term
                     };
@@ -159,7 +159,7 @@ export class PeoplePicker extends React.Component<IPeoplePickerProps, IPeoplePic
     } else {
       return ValidationState.invalid;
     }
-  };
+  }
 
   /**
    * Takes in the picker input and modifies it in whichever way

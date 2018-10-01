@@ -14,24 +14,24 @@ export class QnAActionHandler {
     }
 
 
-    public async getAllMasterListItems(): Promise<any[]> {
-        return await this.service.getAllMasterListItems();
+    public async getAllMasterListItems(masterListName: string): Promise<any[]> {
+        return await this.service.getAllMasterListItems(masterListName);
     }
 
     public async saveMasterItemtoSPList(itemDetails: IQnAMaster, callback: Function): Promise<any>{
-        //return await this.service.saveMasterItemtoSPList(itemDetails)
-        // get all sp lists
-        //check if list exist
-        //get all sitegroups 
-        //check if group exist
-        // if does not exist
-        // create list, create fileds, add fields in view
-        //create group, add editors to group
-        //break list permission, add editors as contributor, FAQ admin as full control
-
-        
+  
         return null;
-    };
+    }
     
+    getUserIds:(email: string) => Promise<any>;
+    getAllDivisionLists: () => Promise<any>;
+    getAllSharePointGroups: () => Promise<any>;
+    createDivisionList: (qnaListName: string) => Promise<any>;
+    createListFields: (listname: string) => Promise<any>;
+    addFieldsToView: (listname: string, fieldsToAdd: any[]) => Promise<any>;
+    createSharePointGroup: (division: string) => Promise<any>;
+    addUsersToSPGroup: (users: string[]) => Promise<any>;
+    breakListPermission: (listName: string) =>Promise<any>;
+    addGroupToList: (listName: string, groupToAdd: any[]) => Promise<any>;
     
 }
