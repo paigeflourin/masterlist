@@ -9,6 +9,8 @@ export interface IQnAMasterListFormProps {
   editItem?: IQnAMaster;
   context: WebPartContext;
   onClick?: void;
+  masterListName: string;
+  onSubmission: Function;
 }
 
 

@@ -24,6 +24,7 @@
     "office-ui-fabric-react": "^5.124.0",
     "react": "15.6.2",
     "react-dom": "15.6.2",
+    "react-table": "^6.8.6",
     "react-taxonomypicker": "0.0.42"
   },
   "devDependencies": {

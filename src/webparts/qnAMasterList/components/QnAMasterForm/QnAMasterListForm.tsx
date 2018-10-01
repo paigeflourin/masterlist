@@ -13,7 +13,7 @@ import { Label } from 'office-ui-fabric-react';
 
 export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, IQnAMasterListFormState> {
   private isEdit: boolean;
-    constructor(props: IQnAMasterListFormProps) {
+    constructor(props: IQnAMasterListFormProps, state: IQnAMasterListFormState) {
         super(props);
         this.onSaveClick = this.onSaveClick.bind(this);
         this.setLoading = this.setLoading.bind(this);
@@ -61,7 +61,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
     if (this.state.divisionQnAListName === '') {
       isPassed = false;
       errorList.push('Division QnA List Name is required');
-  }
+    }
 
     if (isPassed === false) {
         this.setState({ Errors: errorList });
@@ -76,6 +76,12 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
         return;
     }
     this.setLoading(true);
+    //GET THE ID OF THE USER USING EVENT EMAIL THEN SET EDITORSID STATE WITH THE iD OF THE USER
+    let userIds = this.state.Editors.forEach(u => {
+      console.log(u.User.Id, "USER ID", u.User.LoginName);
+      return this.props.actionHandler.getUserIds(u.User.LoginName);
+    });
+    console.log(userIds, "user idsss");
     const formData: IQnAMaster = {
       Id: '',
       division: this.state.division,
@@ -96,7 +102,10 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
           //addGroup to list
 
 
-        this.props.actionHandler.saveMasterItemtoSPList(formData, this.onSaveCallback).then();
+        // this.props.actionHandler.saveMasterItemtoSPList(this.props.masterListName,formData).then(res => {
+        //   //if success pass success else pass fail
+        //   this.props.onSubmission(res);
+        // });
        
     } else {
         formData.Id = this.props.editItem.Id;
@@ -112,18 +121,17 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
     this.setLoading(false);
   }
 
-  private updateEditorsState(prop: any, event) {
+  private updateEditorsState(event) {
     console.log("updateformdatastatefabric!", event);
-//GET THE ID OF THE USER USING EVENT EMAIL THEN SET EDITORSID STATE WITH THE iD OF THE USER
+  
     this.setState({
-      [prop]: event
+      "Editors": event
     });
   }
 
-  private updateFormDataState(someting, event) {
-    // console.log("list name", someting);
+  private updateDivisionListName(event) {
     this.setState({
-      [someting]: event
+      divisionQnAListName: event
     });
 }
   private onTaxPickerChange(terms : IPickerTerms) {
@@ -153,14 +161,15 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
                     placeholder="I am required." 
                     id="divListName"
                     label="Division QnA List Name"
+                    
                     value={this.state.divisionQnAListName}
-                    onChanged={(event) => this.updateFormDataState("divisionQnAListName",event)}
+                    onChanged={(event) => this.updateDivisionListName(event)}
               />
               <Label>Editors</Label>
               { <PeoplePicker 
                  placeholder='Enter email addresses here'
                  selectedItems={this.state.Editors}
-                 onChange={(value) => this.updateEditorsState('Editors', value)}
+                 onChange={(value) => this.updateEditorsState(value)}
               /> }
 
               <PrimaryButton text="Sumbit" onClick={this.onSaveClick} />

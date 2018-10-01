@@ -3,7 +3,7 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import { SPHttpClient, HttpClient, HttpClientResponse } from '@microsoft/sp-http';
 import { IQnAMasterListService } from './IQnAMasterListService';
 import { IQnAMaster } from '../models/IQnAMaster';
-import { sp } from '@pnp/sp';
+import { sp, RenderListDataOptions } from '@pnp/sp';
 
 export class QnAMasterListService  implements IQnAMasterListService {
     private listName: string;
@@ -17,12 +17,30 @@ export class QnAMasterListService  implements IQnAMasterListService {
     }
 
     public getAllMasterListItems(masterListName: string): Promise<any>{
-        return sp.web.lists.getByTitle(masterListName).items.select("Title", "ID", "Division", "QnAListName", "Editors").
-        expand("Editors", "Division").get().then((response) => {
-              console.log(response);
-              return response;
+        console.log("get master items");
+        // return sp.web.lists.getByTitle(masterListName).items.select("Title", "ID", "Division", "QnAListName", "Editors/Id", "Editors/EMail",).
+        // expand("Editors").get().then((response) => {
+        //       console.log(response);
+        //       return response;
+        // });
+
+        return sp.web.lists.getByTitle(masterListName).renderListDataAsStream({
+            RenderOptions: RenderListDataOptions.ListData,
+            ViewXml :  `<View>
+                            <Query> 
+                                <ViewFields>
+                                    <FieldRef Name="Division"/>
+                                    <FieldRef Name="QnAListName"/>
+                                    <FieldRef Name="Editors"/>
+                                </ViewFields>   
+                            
+                            </Query>   
+                        </View>`
+        }).then((userDivision) => {
+            console.log(userDivision);
+            return userDivision.Row;
         });
-    };
+    }
 
     public saveMasterItemtoSPList(masterListName: string, itemDetails: IQnAMaster): Promise<any>{
         return sp.web.lists.getByTitle(masterListName).items.add({
@@ -36,7 +54,7 @@ export class QnAMasterListService  implements IQnAMasterListService {
             return i;
         }).catch(err => {
             return err;
-        })
+        });
     }
 
     public getUserIds(loginName: string): Promise<any> {
@@ -45,21 +63,21 @@ export class QnAMasterListService  implements IQnAMasterListService {
             return res;
         }).catch(err => {
             return err;
-        })
+        });
     }
     
     public getAllDivisionLists(): Promise<any>{
         return sp.web.lists.select("Title").get().then(lists => {
             console.log(lists);
             return lists;
-        })
+        });
     }
 
     public getAllSharePointGroups(): Promise<any> {
         return sp.web.siteGroups.get().then(groups => {
             console.log(groups);
             return groups;
-        })
+        });
     }
 
     public createDivisionList(qnaListName: string): Promise<any>{
@@ -73,7 +91,7 @@ export class QnAMasterListService  implements IQnAMasterListService {
             return res;
         }).catch(error => {
             return error;
-        })
+        });
     }
 
     public createListFields(listname: string): Promise<any>{
@@ -120,12 +138,16 @@ export class QnAMasterListService  implements IQnAMasterListService {
         }, (error: any) => {
             return error;
         }).catch(error => {
-            return error
-        })
+            return error;
+        });
     }
     public addUsersToSPGroup(users: string[]): Promise<any>{
         return null;
     }
-    public breakListPermission: (listName: string) => Promise<any>;
-    public addGroupToList: (listName: string, groupToAdd: any[]) => Promise<any>;
+    public breakListPermission(listName: string):Promise<any>{
+        return null;
+    }
+    public addGroupToList(listName: string, groupToAdd: any[]):Promise<any>{
+        return null;
+    }
 }

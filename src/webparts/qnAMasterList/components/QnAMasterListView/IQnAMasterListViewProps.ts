@@ -1,4 +1,5 @@
 import { QnAActionHandler } from '../QnAMasterContainer/QnAActionHandler'; 
+import { IQnAMaster } from '../../models/IQnAMaster';
 
 export interface IQnAMasterListViewProps {
   
@@ -10,5 +11,5 @@ export interface IQnAMasterListViewProps {
 
 
 export interface IQnAMasterListViewState {
-  
+  masterItems: IQnAMaster[];
 }

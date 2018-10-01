@@ -20,12 +20,12 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
     this.state = {  
       view: ViewType.Display,
       error: "",
-      isDataLoaded: false,
+      isLoading: false,
       isOpen: false,
       masterListName: this.props.masterListName,
       masterListItems: [],
       showForm: false
-    }
+    };
     this.changeView = this.changeView.bind(this);
     this.actionHandler = new QnAActionHandler(this, this.props.service);
     this.toggleFormView = this.toggleFormView.bind(this);
@@ -60,7 +60,10 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
         <h1>QnA Master List</h1> 
          {console.log(this.state.showForm, "show form ")}
           {this.state.showForm ? ( 
-            <QnAMasterListForm context={this.props.context} actionHandler={this.actionHandler}/>
+            <QnAMasterListForm context={this.props.context} 
+              actionHandler={this.actionHandler} 
+              masterListName={this.props.masterListName}
+              onSubmission={this.processData}/>
            ) : (
             <div> 
               <PrimaryButton 
@@ -76,11 +79,22 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
     );
   }
 
+  public processData(data) {
+    //
+    this.setState({
+      showForm: false
+    });
+  }
   private async loadData(props): Promise<void> {
     console.log("INSIDE LOAD DATA!!");
     this.setState({
-      masterListItems: await props.service.getAllItems(),
-        isDataLoaded: true,
+      isLoading: true
+    });
+    let masterItems = await props.service.getAllMasterListItems(props.masterListName);
+
+    this.setState({
+      masterListItems: masterItems,
+        isLoading: false,
         showForm: false
     });
   }

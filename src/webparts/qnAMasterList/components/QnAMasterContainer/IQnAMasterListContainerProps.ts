@@ -13,7 +13,7 @@ export interface IQnAMasterListContainerProps {
 
 
 export interface IQnAMasterListContainerState {
-  isDataLoaded: boolean;
+  isLoading: boolean;
   view: ViewType;
   error: string;
   isOpen: boolean;
