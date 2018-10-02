@@ -107,38 +107,44 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
           let fullControlPermission = "1073741829"; //full controll = 1073741829
           let contributePermission = "1073741827";
           console.log(faqAdminGroup);
-         let createDivisionList = this.props.actionHandler.createDivisionList(this.state.divisionQnAListName).then(listData => {
+
+          this.props.actionHandler.createDivisionList(this.state.divisionQnAListName).then(listData => {
               console.log(listData, "in list creation");
-              //createListFields (NOT WORKING!!!)
+              //createListFields 
               this.props.actionHandler.createListFields(listData.data.Title).then(res=>{
-                  //addFieldsToView (NOT WORKING!!!)
-                  this.props.actionHandler.addFieldsToView(listData.data.Title);
+                  //addFieldsToView (
+                  console.log(res, "after list field creation");
+                  this.props.actionHandler.addFieldsToView(listData.data.Title).then(r => {
+                    this.props.actionHandler.createSharePointGroup(this.state.divisionName).then(groupInfo => {
+                      console.log(groupInfo, "in group creation");
+                      //add users to group 
+                      this.props.actionHandler.addUsersToSPGroup(groupInfo.data.Title,userwithIds).then(afterAdd => {
+                        //break list permission
+                        this.props.actionHandler.breakListPermission(this.state.divisionQnAListName).then(afterBreak => {
+                          //addGroup to list
+                          this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,faqAdminGroup[0].Id,fullControlPermission).then(admin => {
+                            this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,groupInfo.data.Id,contributePermission).then(last => {
+
+                              this.props.actionHandler.saveMasterItemtoSPList(this.props.masterListName,formData).then(res => {
+                                //if success pass success else pass fail to the container
+                                console.log(res, "after saving!");
+                                //this.props.onSubmission(res);
+                              });
+                            });
+                          });
+                        });
+                      });  
+                    });
+                  });
               });
           });
           
-          //createSharePointGroup
-          let createGroup = this.props.actionHandler.createSharePointGroup(this.state.divisionName).then(groupInfo => {
-            console.log(groupInfo, "in group creation");
-            //add users to group 
-            this.props.actionHandler.addUsersToSPGroup(groupInfo.data.Title,userwithIds).then(afterAdd => {
-              //break list permission
-              this.props.actionHandler.breakListPermission(this.state.divisionQnAListName).then(afterBreak => {
-                //addGroup to list
-                 this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,faqAdminGroup[0].Id,fullControlPermission);
-                 this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,groupInfo.data.Id,contributePermission);
+          
+          
 
-              })
-            });  
-          })
-
-          Promise.all([createDivisionList, createGroup]).then(res => {
-              console.log(res, "in promise");
-              this.props.actionHandler.saveMasterItemtoSPList(this.props.masterListName,formData).then(res => {
-                //if success pass success else pass fail to the container
-                console.log(res, "after saving!");
-                //this.props.onSubmission(res);
-            });
-          })
+          // Promise.all([createDivisionList, createGroup]).then(res => {
+          //     console.log(res, "in promise");
+          // })
        
         
         } else if (divisionExists !== undefined){

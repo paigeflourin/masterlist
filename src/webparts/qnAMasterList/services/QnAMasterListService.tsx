@@ -43,9 +43,10 @@ export class QnAMasterListService  implements IQnAMasterListService {
     }
 
     public saveMasterItemtoSPList(masterListName: string, itemDetails: IQnAMaster): Promise<any>{
+        console.log(itemDetails.division[0], "save to sp");
         return sp.web.lists.getByTitle(masterListName).items.add({
             Title: "",
-            Division: itemDetails.division,
+            Division: itemDetails.division[0],
             QnAListName: itemDetails.divisionQnAListName,
             EditorsId: {
                 results: itemDetails.Editors
@@ -108,78 +109,100 @@ export class QnAMasterListService  implements IQnAMasterListService {
     }
 
     public createListFields(listname: string): Promise<any>{
-        const list = sp.web.lists.getByTitle(listname);
-        // add all the fields in a single batch call
-         const batch = sp.web.createBatch();
- 
-        let fieldsToCreate = [
-            {"type": "multiline", "value" : "Questions" },
-            {"type": "multiline", "value" :  "Answers"},
-            {"type": "choice", "value" : "Classification"},
-            {"type": "text", "value" : "QnAID"},
-            {"type": "multiline", "value" : "Remarks"}
-        ];
-    
-      
-        fieldsToCreate.forEach(f => {
-            
-            console.log(f.type);
-            switch (f.type){
-                case "multiline":
-                    list.fields.inBatch(batch).addMultilineText(f.value.toString(),6,false,false,false,false);
-                case "choice": 
-                    list.fields.inBatch(batch).addChoice(f.value.toString(),["Public", "Staff", "Student"],6,true);
-                case "text":
-                    list.fields.inBatch(batch).addText(f.value.toString(),255);
-                default:
-                    return null;
-            }
-        })
-        // execute the batch
-        return batch.execute().then(res => {
-            console.log(res);
-            return res;
-        }).catch(err => {
-            console.log(err);
+        
+        return sp.web.lists.getByTitle(listname).fields.addMultilineText("Questions",6,false,false,false,false).then(q => {
+             sp.web.lists.getByTitle(listname).fields.addMultilineText("Answers",5,false,false,false,false).then(a=>{
+                 sp.web.lists.getByTitle(listname).fields.addChoice("Classification",["Public", "Staff", "Student"],6,true).then(c => {
+                     sp.web.lists.getByTitle(listname).fields.addText("QnAID",255).then(qn => {
+                          sp.web.lists.getByTitle(listname).fields.addMultilineText("Remarks",5,false,false,false,false).then(r => {
+                            return r;
+                        }).catch(err=>{
+                            return err;
+                        })
+                    }).catch(err=>{
+                        return err;
+                    })
+                }).catch(err=>{
+                    return err;
+                })
+            }).catch(err=>{
+                return err;
+            })
+        }).catch(err=>{
             return err;
-        });
+        })
 
+
+        // if you use add you _must_ include the correct FieldTypeKind in the extended properties
+        // return sp.web.lists.getByTitle(this.listName).fields.add("Questions", "SP.FieldMultiLineText", { 
+        //     FieldTypeKind: 3,
+        // }).then(f => {
+        //     sp.web.lists.getByTitle(this.listName).fields.add("Answer", "SP.FieldMultiLineText", { 
+        //         FieldTypeKind: 3,
+        //     }).then(f => {
+        //         console.log(f);
+        //         sp.web.lists.getByTitle(this.listName).fields.add("Remarks", "SP.FieldMultiLineText", { 
+        //             FieldTypeKind: 3,
+        //         }).then(f => {
+        //             console.log(f);
+        //             let choices = ['Staff', 'Public', 'Student'];
+        //             sp.web.lists.getByTitle(this.listName).fields.add("Classification", "SP.FieldChoice", { 
+        //                 FieldTypeKind: 6,
+        //                 Choices: { results: choices }
+        //             }).then(f => {
+        //                 console.log(f);
+        //             });
+        //         });
+        //     });
+        //     console.log(f);
+        // });
     }
+
+
     public addFieldsToView(listname: string): Promise<any>{ //, fieldsToAdd: any[]
 
-        const list = sp.web.lists.getByTitle(listname);
-        const view = list.defaultView;
-
-        const batch = sp.web.createBatch();
-
-        const fields = ['LinkTitle', 'Questions', 'Answers', 'Classification', 'QnAID', 'Remarks'];
-
-        view.fields.inBatch(batch).removeAll();
-        fields.forEach(fieldName => {
-            view.fields.inBatch(batch).add(fieldName);
-        });
-
-        return batch.execute().then(res => {
-            console.log(res);
-            return res;
-        }).catch(err => {
-            console.log(err);
+        return sp.web.lists.getByTitle(listname).defaultView.fields.add("Questions").then(a => {
+            sp.web.lists.getByTitle(listname).defaultView.fields.add("Answers").then(a => {
+                sp.web.lists.getByTitle(listname).defaultView.fields.add("Classification").then(c => {
+                    sp.web.lists.getByTitle(listname).defaultView.fields.add("QnAID").then(qid => {
+                        sp.web.lists.getByTitle(listname).defaultView.fields.add("Remarks").then(r => {
+                            return r;
+                        }).catch(err=>{
+                            return err;
+                        })
+                    }).catch(err=>{
+                        return err;
+                    })
+                }).catch(err=>{
+                    return err;
+                })
+            }).catch(err=>{
+                return err;
+            })
+        }).catch(err=>{
             return err;
-        });
+        })
+       
+        // const list = sp.web.lists.getByTitle(listname);
+        // const view = list.defaultView;
 
-        // return Promise.all([
-        //     sp.web.lists.getByTitle(listname).defaultView.fields.add("Questions"),
-        //     sp.web.lists.getByTitle(listname).defaultView.fields.add("Answers"),
-        //     sp.web.lists.getByTitle(listname).defaultView.fields.add("Classification"),
-        //     sp.web.lists.getByTitle(listname).defaultView.fields.add("QnAID"),
-        //     sp.web.lists.getByTitle(listname).defaultView.fields.add("Remarks")
-        // ]).then(res => {
+        // const batch = sp.web.createBatch();
+
+        // const fields = ['LinkTitle', 'Questions', 'Answers', 'Classification', 'QnAID', 'Remarks'];
+
+        // view.fields.inBatch(batch).removeAll();
+        // fields.forEach(fieldName => {
+        //     view.fields.inBatch(batch).add(fieldName);
+        // });
+
+        // return batch.execute().then(res => {
+        //     console.log(res);
         //     return res;
-        // }, (error: any) => {
-        //     return error;
         // }).catch(err => {
+        //     console.log(err);
         //     return err;
         // });
+
     }
 
     public createSharePointGroup(division: string): Promise<any>{
