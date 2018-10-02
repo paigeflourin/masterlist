@@ -4,16 +4,16 @@ import { IQnAMaster } from "../models/IQnAMaster";
 export interface IQnAMasterListService {
     getAllMasterListItems: (masterListName: string) => Promise<any>;
     saveMasterItemtoSPList: (masterListName: string, itemDetailds: IQnAMaster) => Promise<any>;
-    getUserIds:(email: string) => Promise<any>;
+    getUserIds:(userInfo: any[]) => Promise<any>;
     getAllDivisionLists: () => Promise<any>;
     getAllSharePointGroups: () => Promise<any>;
     createDivisionList: (qnaListName: string) => Promise<any>;
     createListFields: (listname: string) => Promise<any>;
-    addFieldsToView: (listname: string, fieldsToAdd: any[]) => Promise<any>;
+    addFieldsToView: (listname: string) => Promise<any>; //, fieldsToAdd: any[]
     createSharePointGroup: (division: string) => Promise<any>;
-    addUsersToSPGroup: (users: string[]) => Promise<any>;
+    addUsersToSPGroup: (groupName: string, users: any[]) => Promise<any>;
     breakListPermission: (listName: string) =>Promise<any>;
-    addGroupToList: (listName: string, groupToAdd: any[]) => Promise<any>;
+    addGroupToList: (listName: string,  groupId: any, roleId: any) => Promise<any>;
     
     
     // addNewRequest: (formData: IPurchaseRequisition) => Promise<IItemResult>;

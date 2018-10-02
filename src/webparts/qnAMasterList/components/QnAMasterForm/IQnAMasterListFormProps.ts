@@ -17,6 +17,7 @@ export interface IQnAMasterListFormProps {
 export interface IQnAMasterListFormState {
   //termKey?: string | number;
   division: IPickerTerms;
+  divisionName: string;
   divisionQnAListName: string;
   Editors: SharePointUserPersona[];
   Errors: string[];

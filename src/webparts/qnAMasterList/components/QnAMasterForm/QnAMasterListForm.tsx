@@ -25,6 +25,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
             this.isEdit = false;
             this.state = {
               division: [],
+              divisionName: "",
               divisionQnAListName: "",
               Editors: [],
               EditorsId: [],
@@ -35,6 +36,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
             this.isEdit = true;
             this.state = {
                 division: this.props.editItem.division,
+                divisionName: this.props.editItem.division[0].name,
                 divisionQnAListName: this.props.editItem.divisionQnAListName,
                 Editors: this.props.editItem.Editors,
                 Errors: [],
@@ -76,38 +78,78 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
         return;
     }
     this.setLoading(true);
-    //GET THE ID OF THE USER USING EVENT EMAIL THEN SET EDITORSID STATE WITH THE iD OF THE USER
-    let userIds = this.state.Editors.forEach(u => {
-      console.log(u.User.Id, "USER ID", u.User.LoginName);
-      return this.props.actionHandler.getUserIds(u.User.LoginName);
-    });
-    console.log(userIds, "user idsss");
+
+    let userwithIds = await this.props.actionHandler.getUserIds(this.state.Editors);
+    let ids = userwithIds.map(u => u.Id);
+    console.log(ids, "IDS");
     const formData: IQnAMaster = {
       Id: '',
       division: this.state.division,
       divisionQnAListName: this.state.divisionQnAListName,
-      Editors: this.state.Editors //pass the id of the editors only
+      Editors: ids
     };
 
     if (!this.isEdit) {
       console.log("form is new"); 
-        //getAllDivisionList; check if the division list name is unique
-        //gettAllSharePointGroups; check if the group name is unique
-        //createDiviionList
-          //createListFields
-          //addFieldsToView
-        //createSharePointGroup
-          //add users to group
-          //break list permission
-          //addGroup to list
+  
+        let siteLists = await this.props.actionHandler.getAllDivisionLists(); 
+        let spgroups = await this.props.actionHandler.getAllSharePointGroups();
+        
+        let divisionGroupName = this.state.divisionName + " Editors";
+        let divisionExists = siteLists.find(l => l.Title == this.state.divisionQnAListName);
+        let groupExists = spgroups.find(g => g.LoginName == divisionGroupName);
+        
+        console.log(divisionExists, " and group ", groupExists);
 
+        if((divisionExists === undefined) && (groupExists === undefined )){
 
-        // this.props.actionHandler.saveMasterItemtoSPList(this.props.masterListName,formData).then(res => {
-        //   //if success pass success else pass fail
-        //   this.props.onSubmission(res);
-        // });
+          let faqAdminGroup = spgroups.filter(g => g.Title == "FAQ Administrators");
+          let fullControlPermission = "1073741829"; //full controll = 1073741829
+          let contributePermission = "1073741827";
+          console.log(faqAdminGroup);
+         let createDivisionList = this.props.actionHandler.createDivisionList(this.state.divisionQnAListName).then(listData => {
+              console.log(listData, "in list creation");
+              //createListFields (NOT WORKING!!!)
+              this.props.actionHandler.createListFields(listData.data.Title).then(res=>{
+                  //addFieldsToView (NOT WORKING!!!)
+                  this.props.actionHandler.addFieldsToView(listData.data.Title);
+              });
+          });
+          
+          //createSharePointGroup
+          let createGroup = this.props.actionHandler.createSharePointGroup(this.state.divisionName).then(groupInfo => {
+            console.log(groupInfo, "in group creation");
+            //add users to group 
+            this.props.actionHandler.addUsersToSPGroup(groupInfo.data.Title,userwithIds).then(afterAdd => {
+              //break list permission
+              this.props.actionHandler.breakListPermission(this.state.divisionQnAListName).then(afterBreak => {
+                //addGroup to list
+                 this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,faqAdminGroup[0].Id,fullControlPermission);
+                 this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,groupInfo.data.Id,contributePermission);
+
+              })
+            });  
+          })
+
+          Promise.all([createDivisionList, createGroup]).then(res => {
+              console.log(res, "in promise");
+              this.props.actionHandler.saveMasterItemtoSPList(this.props.masterListName,formData).then(res => {
+                //if success pass success else pass fail to the container
+                console.log(res, "after saving!");
+                //this.props.onSubmission(res);
+            });
+          })
        
+        
+        } else if (divisionExists !== undefined){
+          //toastr.error("Division is not unique");
+          console.log("division not unique");
+        } else if(groupExists !== undefined) {
+          //toastr.error("Group is not unique");
+          console.log("group not unique");
+        }
     } else {
+      console.log("EDIT");
         formData.Id = this.props.editItem.Id;
       
 
@@ -137,7 +179,8 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
   private onTaxPickerChange(terms : IPickerTerms) {
     console.log("Terms", terms);
     this.setState({
-      division: terms
+      division: terms,
+      divisionName: terms[0].name
     });
   }
 

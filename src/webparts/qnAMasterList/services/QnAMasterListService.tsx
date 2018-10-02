@@ -57,15 +57,28 @@ export class QnAMasterListService  implements IQnAMasterListService {
         });
     }
 
-    public getUserIds(loginName: string): Promise<any> {
-       return sp.web.siteUsers.getByLoginName(loginName).get().then(res => {
-            console.log(res);
-            return res;
-        }).catch(err => {
-            return err;
+    public getUserIds(userInfo: any[]): Promise<any> {
+        //let promises = [];
+        let resp;
+        let promises = userInfo.map( u => {
+            console.log(u.user.Description);
+            return sp.web.siteUsers.getByEmail(u.user.Description).get().then(); //res => {
+              //  return res.Id;   
+            //});
         });
+
+        return Promise.all(promises)
+        .then(res => {
+            console.log(res);
+           return  res;
+        })
+        .catch(err => { 
+            return err
+        });
+
+        //return resp;
     }
-    
+
     public getAllDivisionLists(): Promise<any>{
         return sp.web.lists.select("Title").get().then(lists => {
             console.log(lists);
@@ -87,7 +100,7 @@ export class QnAMasterListService  implements IQnAMasterListService {
              100,
              true
         ).then(res => {
-            console.log("list created", res);
+            //console.log("list created", res);
             return res;
         }).catch(error => {
             return error;
@@ -95,40 +108,80 @@ export class QnAMasterListService  implements IQnAMasterListService {
     }
 
     public createListFields(listname: string): Promise<any>{
-        return Promise.all([
-            sp.web.lists.getByTitle(this.listName).fields.addMultilineText("Questions",6,false,false,false,false),
-            sp.web.lists.getByTitle(this.listName).fields.addMultilineText("Answers",5,false,false,false,false),
-            sp.web.lists.getByTitle(this.listName).fields.addChoice("Classification",["Public", "Staff", "Student"],6,true),
-            sp.web.lists.getByTitle(this.listName).fields.addText("QnAID",255),
-            sp.web.lists.getByTitle(this.listName).fields.addMultilineText("Remarks",5,false,false,false,false)
-        ]).then(res => {
-            return res;
-        }, (error: any) => {
-            return error;
-        }).catch(err => {
-            return err;
-        });
-        // pnp.sp.web.fields.add('name', 'SP.FieldChoice', {
-        //     FieldTypeKind: 6,
-        //     Choices: { results: ['choice1', 'choice2'] }
-        // });
+        const list = sp.web.lists.getByTitle(listname);
+        // add all the fields in a single batch call
+         const batch = sp.web.createBatch();
+ 
+        let fieldsToCreate = [
+            {"type": "multiline", "value" : "Questions" },
+            {"type": "multiline", "value" :  "Answers"},
+            {"type": "choice", "value" : "Classification"},
+            {"type": "text", "value" : "QnAID"},
+            {"type": "multiline", "value" : "Remarks"}
+        ];
+    
       
-    }
-    public addFieldsToView(listname: string, fieldsToAdd: any[]): Promise<any>{
-        return Promise.all([
-            sp.web.lists.getByTitle(listname).defaultView.fields.add("Questions"),
-            sp.web.lists.getByTitle(listname).defaultView.fields.add("Answers"),
-            sp.web.lists.getByTitle(listname).defaultView.fields.add("Classification"),
-            sp.web.lists.getByTitle(listname).defaultView.fields.add("QnAID"),
-            sp.web.lists.getByTitle(listname).defaultView.fields.add("Remarks")
-        ]).then(res => {
+        fieldsToCreate.forEach(f => {
+            
+            console.log(f.type);
+            switch (f.type){
+                case "multiline":
+                    list.fields.inBatch(batch).addMultilineText(f.value.toString(),6,false,false,false,false);
+                case "choice": 
+                    list.fields.inBatch(batch).addChoice(f.value.toString(),["Public", "Staff", "Student"],6,true);
+                case "text":
+                    list.fields.inBatch(batch).addText(f.value.toString(),255);
+                default:
+                    return null;
+            }
+        })
+        // execute the batch
+        return batch.execute().then(res => {
+            console.log(res);
             return res;
-        }, (error: any) => {
-            return error;
         }).catch(err => {
+            console.log(err);
             return err;
         });
+
     }
+    public addFieldsToView(listname: string): Promise<any>{ //, fieldsToAdd: any[]
+
+        const list = sp.web.lists.getByTitle(listname);
+        const view = list.defaultView;
+
+        const batch = sp.web.createBatch();
+
+        const fields = ['LinkTitle', 'Questions', 'Answers', 'Classification', 'QnAID', 'Remarks'];
+
+        view.fields.inBatch(batch).removeAll();
+        fields.forEach(fieldName => {
+            view.fields.inBatch(batch).add(fieldName);
+        });
+
+        return batch.execute().then(res => {
+            console.log(res);
+            return res;
+        }).catch(err => {
+            console.log(err);
+            return err;
+        });
+
+        // return Promise.all([
+        //     sp.web.lists.getByTitle(listname).defaultView.fields.add("Questions"),
+        //     sp.web.lists.getByTitle(listname).defaultView.fields.add("Answers"),
+        //     sp.web.lists.getByTitle(listname).defaultView.fields.add("Classification"),
+        //     sp.web.lists.getByTitle(listname).defaultView.fields.add("QnAID"),
+        //     sp.web.lists.getByTitle(listname).defaultView.fields.add("Remarks")
+        // ]).then(res => {
+        //     return res;
+        // }, (error: any) => {
+        //     return error;
+        // }).catch(err => {
+        //     return err;
+        // });
+    }
+
     public createSharePointGroup(division: string): Promise<any>{
         return sp.web.siteGroups.add({
             Title: division + " Editors",
@@ -141,13 +194,37 @@ export class QnAMasterListService  implements IQnAMasterListService {
             return error;
         });
     }
-    public addUsersToSPGroup(users: string[]): Promise<any>{
-        return null;
+
+    public addUsersToSPGroup(groupName: string, users: any[]): Promise<any>{
+        console.log(users);
+       let promises = users.map(u => {
+            return sp.web.siteGroups.getByName(groupName).users.add(u.LoginName);
+        });
+
+        return Promise.all(promises).then(res => {
+            console.log(res);
+            return res;
+        }).catch(err => {
+            return err;
+        })
+         
     }
     public breakListPermission(listName: string):Promise<any>{
-        return null;
+        return sp.web.lists.getByTitle(listName).breakRoleInheritance(false,true).then(res =>{
+            return res;
+        }, (error) => {
+            return error;
+        }).catch(err =>{
+            return err;
+        });
     }
-    public addGroupToList(listName: string, groupToAdd: any[]):Promise<any>{
-        return null;
+    public addGroupToList(listName: string, groupId: any, roleId: any):Promise<any>{
+        return sp.web.lists.getByTitle(listName).roleAssignments.add(groupId,roleId).then(res =>{
+            return res;
+        }, (error) => {
+            return error;
+        }).catch(err =>{
+            return err;
+        });
     }
 }

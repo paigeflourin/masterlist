@@ -52,6 +52,12 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
 
   public render(): React.ReactElement<IQnAMasterListContainerProps> {
     
+    if(!this.props.isConfigured){
+      return(
+        <div> Kindly configure webpart properties </div>
+      );
+    }
+
     return (
       <div className={ styles.qnAMasterList }>
         <div className={ styles.container }>

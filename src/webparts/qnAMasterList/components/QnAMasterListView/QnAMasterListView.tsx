@@ -42,7 +42,7 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
   public renderEditorsField(cellInfo) {
     console.log(cellInfo.original.Editors);
     return cellInfo.original.Editors.map(editor => {
-      console.log(editor)
+      //console.log(editor)
       return (
         <div>
           <span> {editor.title} </span>

@@ -23,8 +23,8 @@ export class QnAActionHandler {
         return null;
     }
     
-    public async getUserIds(email: string):Promise<any>{
-        let res = await this.service.getUserIds(email);
+    public async getUserIds(userInfo: any[]):Promise<any>{
+        let res = await this.service.getUserIds(userInfo);
         return res;
     }
     public async getAllDivisionLists():Promise<any>{
@@ -40,20 +40,20 @@ export class QnAActionHandler {
     public async createListFields(listname: string) :Promise<any>{
         return await this.service.createListFields(listname);
     }
-    public async addFieldsToView(listname: string, fieldsToAdd: any[]) :Promise<any>{
-        return await this.service.addFieldsToView(listname,fieldsToAdd);
+    public async addFieldsToView(listname: string) :Promise<any>{ //, fieldsToAdd: any[]
+        return await this.service.addFieldsToView(listname);
     }
     public async createSharePointGroup(division: string):Promise<any>{
         return await this.service.createSharePointGroup(division);
     }
-    public async addUsersToSPGroup(users: string[]):Promise<any>{
-        return await this.service.addUsersToSPGroup(users);
+    public async addUsersToSPGroup(groupName: string, users: any[]):Promise<any>{
+        return await this.service.addUsersToSPGroup(groupName, users);
     }
     public async breakListPermission(listName: string):Promise<any>{
         return await this.service.breakListPermission(listName);
     }
-    public async addGroupToList(listName: string, groupToAdd: any[]):Promise<any>{
-        return await this.service.addGroupToList(listName,groupToAdd);
+    public async addGroupToList(listName: string, groupId: any, roleId: any):Promise<any>{
+        return await this.service.addGroupToList(listName, groupId, roleId);
     }
     
 }
