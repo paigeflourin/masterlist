@@ -55,5 +55,8 @@ export class QnAActionHandler {
     public async addGroupToList(listName: string, groupId: any, roleId: any):Promise<any>{
         return await this.service.addGroupToList(listName, groupId, roleId);
     }
+
+    public removeusersFromGroup: (groupName: string, users: any[]) => Promise<any>;
+    public addnewUsersToGroup:(groupId: number, editors: any[]) => Promise<any>;
     
 }

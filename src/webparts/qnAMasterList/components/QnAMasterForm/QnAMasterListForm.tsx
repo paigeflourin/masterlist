@@ -74,7 +74,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
   private async onSaveClick(): Promise<void> {
     console.log("on save click");
     console.log("state", this.state);
-    if (this.validateFormData() === false) {
+    if(this.validateFormData() === false) {
         return;
     }
     this.setLoading(true);
@@ -109,53 +109,45 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
           console.log(faqAdminGroup);
 
 
-          //test()
-          //.then(()=> {
-          //    a.then()
-          //})
-          //. then(() => {
-          //  b.then()
-          //})
-          //.then(() => {....}
+          // this.props.actionHandler.createDivisionList(this.state.divisionQnAListName)
+          // .then(listData => this.props.actionHandler.createListFields(listData.data.Title).then(() =>  listData))
+          // .then(listData => this.props.actionHandler.addFieldsToView(listData.data.Title))
+          // .then(() => this.props.actionHandler.createSharePointGroup(this.state.divisionName))
+          // .then(groupInfo => this.props.actionHandler.addUsersToSPGroup(groupInfo.data.Title, userwithIds).then(() => groupInfo))
+          // .then(groupInfo => this.props.actionHandler.breakListPermission(this.state.divisionQnAListName).then(() => groupInfo))
+          // .then(groupInfo => this.props.actionHandler.addGroupToList(this.state.divisionQnAListName, faqAdminGroup[0].Id, fullControlPermission).then(() => groupInfo))
+          // .then(groupInfo => this.props.actionHandler.addGroupToList(this.state.divisionQnAListName, groupInfo.data.Id, contributePermission))
+          // .then(() => this.props.actionHandler.saveMasterItemtoSPList(this.props.masterListName, formData))
+          // .then(res2 => {
 
-          this.props.actionHandler.createDivisionList(this.state.divisionQnAListName).then(listData => {
-              console.log(listData, "in list creation");
-              //createListFields 
-              this.props.actionHandler.createListFields(listData.data.Title).then(res=>{
-                  //addFieldsToView (
-                  console.log(res, "after list field creation");
-                  this.props.actionHandler.addFieldsToView(listData.data.Title).then(r => {
-                    this.props.actionHandler.createSharePointGroup(this.state.divisionName).then(groupInfo => {
-                      console.log(groupInfo, "in group creation");
-                      //add users to group 
-                      this.props.actionHandler.addUsersToSPGroup(groupInfo.data.Title,userwithIds).then(afterAdd => {
-                        //break list permission
-                        this.props.actionHandler.breakListPermission(this.state.divisionQnAListName).then(afterBreak => {
-                          //addGroup to list
-                          this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,faqAdminGroup[0].Id,fullControlPermission).then(admin => {
-                            this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,groupInfo.data.Id,contributePermission).then(last => {
+          //   console.log(res2, "after saving!")
+          //   this.props.onSubmission(res2);
+          // }).catch(err=> {
+          //   console.log(err);
+          // });
 
-                              this.props.actionHandler.saveMasterItemtoSPList(this.props.masterListName,formData).then(res => {
-                                //if success pass success else pass fail to the container
-                                console.log(res, "after saving!");
-                                //this.props.onSubmission(res);
-                              });
-                            });
-                          });
-                        });
-                      });  
-                    });
-                  });
-              });
+
+
+          (async() => {
+            const listData =    await this.props.actionHandler.createDivisionList(this.state.divisionQnAListName)
+            console.log(listData, "in list creation");
+            const res =         await this.props.actionHandler.createListFields(listData.data.Title)
+            console.log(res, "after list field creation");
+            const r =           await this.props.actionHandler.addFieldsToView(listData.data.Title);
+            const groupInfo =   await this.props.actionHandler.createSharePointGroup(this.state.divisionName);
+            console.log(groupInfo, "in group creation");
+            const afterAdd =    await this.props.actionHandler.addUsersToSPGroup(groupInfo.data.Title,userwithIds);
+            const afterBreak =  await this.props.actionHandler.breakListPermission(this.state.divisionQnAListName);
+            const admin =       await this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,faqAdminGroup[0].Id,fullControlPermission);
+            const last =        await this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,groupInfo.data.Id,contributePermission);
+            const res2 =        await this.props.actionHandler.saveMasterItemtoSPList(this.props.masterListName,formData);
+            console.log(res2, "after saving!");
+            this.props.onSubmission("done");
+          })().catch(err=> {
+            //toast.error("error in saving master list item")
+            this.props.onSubmission(err);
+
           });
-          
-          
-          
-
-          // Promise.all([createDivisionList, createGroup]).then(res => {
-          //     console.log(res, "in promise");
-          // })
-       
         
         } else if (divisionExists !== undefined){
           //toastr.error("Division is not unique");

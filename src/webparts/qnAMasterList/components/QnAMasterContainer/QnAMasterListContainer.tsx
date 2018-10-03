@@ -86,7 +86,7 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
   }
 
   public processData(data) {
-    //
+    console.log(data);
     this.setState({
       showForm: false
     });

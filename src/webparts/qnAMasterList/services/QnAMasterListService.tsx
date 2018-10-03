@@ -43,10 +43,15 @@ export class QnAMasterListService  implements IQnAMasterListService {
     }
 
     public saveMasterItemtoSPList(masterListName: string, itemDetails: IQnAMaster): Promise<any>{
-        console.log(itemDetails.division, "save to sp");
+        console.log(itemDetails.division, "save to sp", itemDetails.Editors);
         return sp.web.lists.getByTitle(masterListName).items.add({
             Title: "",
-            Division: "CIT", //itemDetails.division[0], key missing
+            Division: {
+                __metadata: { "type": "SP.Taxonomy.TaxonomyFieldValue" },
+                Label: itemDetails.division[0].name,
+                TermGuid: itemDetails.division[0].key,
+                WssId: -1
+            },
             QnAListName: itemDetails.divisionQnAListName,
             EditorsId: {
                 results: itemDetails.Editors
@@ -110,28 +115,11 @@ export class QnAMasterListService  implements IQnAMasterListService {
 
     public createListFields(listname: string): Promise<any>{
         
-        return sp.web.lists.getByTitle(listname).fields.addMultilineText("Questions",6,false,false,false,false).then(q => {
-             sp.web.lists.getByTitle(listname).fields.addMultilineText("Answers",5,false,false,false,false).then(a=>{
-                 sp.web.lists.getByTitle(listname).fields.addChoice("Classification",["Public", "Staff", "Student"],6,true).then(c => {
-                     sp.web.lists.getByTitle(listname).fields.addText("QnAID",255).then(qn => {
-                          sp.web.lists.getByTitle(listname).fields.addMultilineText("Remarks",5,false,false,false,false).then(r => {
-                            return r;
-                        }).catch(err=>{
-                            return err;
-                        })
-                    }).catch(err=>{
-                        return err;
-                    })
-                }).catch(err=>{
-                    return err;
-                })
-            }).catch(err=>{
-                return err;
-            })
-        }).catch(err=>{
-            return err;
-        })
-
+        return sp.web.lists.getByTitle(listname).fields.addMultilineText("Questions",6,false,false,false,false)
+        .then(() => sp.web.lists.getByTitle(listname).fields.addMultilineText("Answers",5,false,false,false,false))
+        .then(() => sp.web.lists.getByTitle(listname).fields.addChoice("Classification",["Public", "Staff", "Student"],6,true))
+        .then(() => sp.web.lists.getByTitle(listname).fields.addText("QnAID",255))
+        .then(() => sp.web.lists.getByTitle(listname).fields.addMultilineText("Remarks",5,false,false,false,false));
 
         // if you use add you _must_ include the correct FieldTypeKind in the extended properties
         // return sp.web.lists.getByTitle(this.listName).fields.add("Questions", "SP.FieldMultiLineText", { 
@@ -162,26 +150,17 @@ export class QnAMasterListService  implements IQnAMasterListService {
     public addFieldsToView(listname: string): Promise<any>{ //, fieldsToAdd: any[]
 
         return sp.web.lists.getByTitle(listname).defaultView.fields.add("Questions").then(a => {
-            sp.web.lists.getByTitle(listname).defaultView.fields.add("Answers").then(a => {
-                sp.web.lists.getByTitle(listname).defaultView.fields.add("Classification").then(c => {
-                    sp.web.lists.getByTitle(listname).defaultView.fields.add("QnAID").then(qid => {
-                        sp.web.lists.getByTitle(listname).defaultView.fields.add("Remarks").then(r => {
-                            return r;
-                        }).catch(err=>{
-                            return err;
-                        })
-                    }).catch(err=>{
-                        return err;
-                    })
-                }).catch(err=>{
-                    return err;
-                })
-            }).catch(err=>{
-                return err;
-            })
+            sp.web.lists.getByTitle(listname).defaultView.fields.add("Answers")
+        }).then(()=>{
+            sp.web.lists.getByTitle(listname).defaultView.fields.add("Classification")
+        }).then(()=> {
+            sp.web.lists.getByTitle(listname).defaultView.fields.add("QnAID")
+        }).then(()=> {
+            sp.web.lists.getByTitle(listname).defaultView.fields.add("Remarks")
         }).catch(err=>{
             return err;
         })
+
        
         // const list = sp.web.lists.getByTitle(listname);
         // const view = list.defaultView;
@@ -250,4 +229,7 @@ export class QnAMasterListService  implements IQnAMasterListService {
             return err;
         });
     }
+
+    public removeusersFromGroup: (groupName: string, users: any[]) => Promise<any>;
+    public addnewUsersToGroup:(groupId: number, editors: any[]) => Promise<any>;
 }

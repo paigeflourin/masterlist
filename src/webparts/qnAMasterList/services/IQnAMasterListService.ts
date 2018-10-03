@@ -14,11 +14,8 @@ export interface IQnAMasterListService {
     addUsersToSPGroup: (groupName: string, users: any[]) => Promise<any>;
     breakListPermission: (listName: string) =>Promise<any>;
     addGroupToList: (listName: string,  groupId: any, roleId: any) => Promise<any>;
+    removeusersFromGroup: (groupName: string, users: any[]) => Promise<any>;
+    addnewUsersToGroup:(groupId: number, editors: any[]) => Promise<any>;
     
-    
-    // addNewRequest: (formData: IPurchaseRequisition) => Promise<IItemResult>;
-    // updateRequest(formData: IPurchaseRequisition): Promise<IItemResult>;
-    // deleteRequest(Id: string): Promise<IItemResult>;
-    // // updateWebpartProps(propertyPath:string, newValue:any):void;
-    // changeStatus(Id:string,newStatus:string):Promise<IItemResult>;
+  
 }
