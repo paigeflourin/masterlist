@@ -220,8 +220,14 @@ export class QnAMasterListService  implements IQnAMasterListService {
     }
 
     public getGroupUsers(groupName: string): Promise<any> {
-        return sp.web.siteGroups.getByName(groupName).get().then(users => {
-            return users;
+        return sp.web.siteGroups.getByName(groupName).users.get().then(users => {
+            //let userArray = [];
+            //if(!Array.isArray(users)){
+           //     userArray.push(users);
+            //    return userArray;
+            //} else {
+                return users;
+           // }
         }, (error) => {
             return error;
         }).catch(err =>{
@@ -231,16 +237,18 @@ export class QnAMasterListService  implements IQnAMasterListService {
 
     public removeusersFromGroup(groupName: string, users: any[]): Promise<any>{
         console.log(users);
+
         let promises = users.map(u => {
-             return sp.web.siteGroups.getByName(groupName).users.removeByLoginName(u.LoginName);
-         });
- 
-         return Promise.all(promises).then(res => {
-             console.log(res);
-             return res;
-         }).catch(err => {
-             return err;
-         })
+            return sp.web.siteGroups.getByName(groupName).users.removeByLoginName(u.LoginName);
+        });
+
+        return Promise.all(promises).then(res => {
+            console.log(res);
+            return res;
+        }).catch(err => {
+            return err;
+        })
+
     }
 
 }
