@@ -6,11 +6,11 @@ import { TaxonomyPicker, IPickerTerms } from "@pnp/spfx-controls-react/lib/Taxon
 export interface IQnAMasterListFormProps {
   onChange?: (items: SharePointUserPersona[]) => void;
   actionHandler: QnAActionHandler;
-  editItem?: IQnAMaster;
-  context: WebPartContext;
+  editItem?: any;
+  context?: WebPartContext;
   onClick?: void;
   masterListName: string;
-  onSubmission: Function;
+  onSubmission?: Function;
 }
 
 
@@ -23,5 +23,5 @@ export interface IQnAMasterListFormState {
   Errors: string[];
   isLoading: boolean;
   EditorsId: any[];
-
+  Id: any;
 }

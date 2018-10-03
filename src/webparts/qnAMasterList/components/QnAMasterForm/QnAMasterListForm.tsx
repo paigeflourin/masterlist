@@ -9,7 +9,9 @@ import  IItemResult  from '../../models/IItemResult';
 import { TaxonomyPicker, IPickerTerms } from "@pnp/spfx-controls-react/lib/TaxonomyPicker";
 import { PeoplePicker } from '../../services/PeoplePicker/PeoplePicker';
 import { Label } from 'office-ui-fabric-react';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
 
 export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, IQnAMasterListFormState> {
   private isEdit: boolean;
@@ -17,13 +19,14 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
         super(props);
         this.onSaveClick = this.onSaveClick.bind(this);
         this.setLoading = this.setLoading.bind(this);
-        this.onSaveCallback = this.onSaveCallback.bind(this);
+        //this.onSaveCallback = this.onSaveCallback.bind(this);
         //this.updateFormDataState = this.updateFormDataState.bind(this);
         this.validateFormData = this.validateFormData.bind(this);
         this.onTaxPickerChange = this.onTaxPickerChange.bind(this);
         if (!this.props.editItem) {
             this.isEdit = false;
             this.state = {
+              Id: "",
               division: [],
               divisionName: "",
               divisionQnAListName: "",
@@ -35,12 +38,13 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
         } else {
             this.isEdit = true;
             this.state = {
-                division: this.props.editItem.division,
-                divisionName: this.props.editItem.division[0].name,
-                divisionQnAListName: this.props.editItem.divisionQnAListName,
+                Id: this.props.editItem.Id, 
+                division: this.props.editItem.Division,
+                divisionName: this.props.editItem.Division,
+                divisionQnAListName: this.props.editItem.QnAListName,
                 Editors: this.props.editItem.Editors,
                 Errors: [],
-                EditorsId: [],
+                EditorsId: this.props.editItem.Editors.map(u => u.id),
                 isLoading: false
 
             };
@@ -82,15 +86,16 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
     let userwithIds = await this.props.actionHandler.getUserIds(this.state.Editors);
     let ids = userwithIds.map(u => u.Id);
     console.log(ids, "IDS");
-    const formData: IQnAMaster = {
-      Id: '',
-      division: this.state.division,
-      divisionQnAListName: this.state.divisionQnAListName,
-      Editors: ids
-    };
+    
 
     if (!this.isEdit) {
       console.log("form is new"); 
+
+      const formData: IQnAMaster = {
+        division: this.state.division,
+        divisionQnAListName: this.state.divisionQnAListName,
+        Editors: ids
+      };
   
         let siteLists = await this.props.actionHandler.getAllDivisionLists(); 
         let spgroups = await this.props.actionHandler.getAllSharePointGroups();
@@ -125,9 +130,6 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
           // }).catch(err=> {
           //   console.log(err);
           // });
-
-
-
           (async() => {
             const listData =    await this.props.actionHandler.createDivisionList(this.state.divisionQnAListName)
             console.log(listData, "in list creation");
@@ -144,31 +146,48 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
             console.log(res2, "after saving!");
             this.props.onSubmission("done");
           })().catch(err=> {
-            //toast.error("error in saving master list item")
+            console.log(err);
+            toast.error("error in saving master list item")
+            this.setLoading(false);
             this.props.onSubmission(err);
-
           });
         
         } else if (divisionExists !== undefined){
-          //toastr.error("Division is not unique");
+          toast.error("Division is not unique");
           console.log("division not unique");
+          this.setLoading(false);
         } else if(groupExists !== undefined) {
-          //toastr.error("Group is not unique");
+          toast.error("Group is not unique");
           console.log("group not unique");
+          this.setLoading(false);
         }
     } else {
       console.log("EDIT");
-        formData.Id = this.props.editItem.Id;
-      
+      let divisionGroupName = this.state.divisionName + " Editors";
+      const formData: IQnAMaster = {
+        Id: this.state.Id,
+        division: this.state.division,
+        divisionQnAListName: this.state.divisionQnAListName,
+        Editors: ids
+      };
+
+      (async() => {
+        const groupUsers =    await this.props.actionHandler.getGroupUsers(divisionGroupName);
+        console.log(groupUsers, "in getgroupusers");
+        const res2 =        await this.props.actionHandler.removeusersFromGroup(divisionGroupName,groupUsers);
+        console.log(res2, "after user removal!");
+        const addUsers =        await this.props.actionHandler.addUsersToSPGroup(divisionGroupName,groupUsers);
+        console.log(addUsers, "after add users!");
+        const saveItem =        await this.props.actionHandler.updateMasterItemstoSPList(this.props.masterListName,formData.Id,formData.Editors);
+        this.props.onSubmission("done");
+        this.setLoading(false);
+      })().catch(err=> {
+        toast.error("error in saving master list item")
+        this.setLoading(false);
+        this.props.onSubmission(err);
+      });
 
     }
-  }
-
-  private onSaveCallback(result: IItemResult): void {
-    if (result.status === false) {
-        this.setState({ Errors: [result.message] });
-    }
-    this.setLoading(false);
   }
 
   private updateEditorsState(event) {
@@ -193,42 +212,82 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
   }
 
   public render(): React.ReactElement<IQnAMasterListFormProps> {
-    return (
-      <div className={ styles.qnAMasterList }>
-        <div className={ styles.container }>
-      
-              <TaxonomyPicker
-                allowMultipleSelections={false}
-                termsetNameOrID="9a72c139-d649-4342-970f-a53fe0ef72e3"
-                panelTitle="Select Term"
-                label="Division Picker"
-                context={this.props.context}
-                onChange={this.onTaxPickerChange}
-                //onChange={(event) => this.updateFormDataState('division', event)}
-                isTermSetSelectable={false}
-              />
-              
-              <TextField required={true} 
-                    placeholder="I am required." 
-                    id="divListName"
-                    label="Division QnA List Name"
-                    
-                    value={this.state.divisionQnAListName}
-                    onChanged={(event) => this.updateDivisionListName(event)}
-              />
-              <Label>Editors</Label>
-              { <PeoplePicker 
-                 placeholder='Enter email addresses here'
-                 selectedItems={this.state.Editors}
-                 onChange={(value) => this.updateEditorsState(value)}
-              /> }
 
-              <PrimaryButton text="Sumbit" onClick={this.onSaveClick} />
+
+
+    if(this.isEdit){
+      return (
+        <div className={ styles.qnAMasterList }>
+          <div className={ styles.container }>
+            <ToastContainer />
+            {this.state.isLoading && <LoadingSpinner />}
             
-        
+            <TextField required={true} 
+                      id="division"
+                      label="Division"
+                      disabled={true}
+                      value={this.state.divisionName}
+                />
+            <TextField required={true} 
+                  id="divListName"
+                  label="Division QnA List Name"
+                  disabled={true}
+                  value={this.state.divisionQnAListName}
+            />
+             <Label>Editors</Label>
+                { <PeoplePicker 
+                   placeholder='Enter email addresses here'
+                   selectedItems={this.state.Editors}
+                   onChange={(value) => this.updateEditorsState(value)}
+                /> }
+  
+                <PrimaryButton text="Sumbit" onClick={this.onSaveClick} />
+
+          </div>
         </div>
-      </div>
-    );
+      );
+
+    } else {
+      return (  
+        <div className={ styles.qnAMasterList }>
+          <div className={ styles.container }>
+            <ToastContainer />
+            {this.state.isLoading && <LoadingSpinner />}
+            
+                <TaxonomyPicker
+                  allowMultipleSelections={false}
+                  termsetNameOrID="9a72c139-d649-4342-970f-a53fe0ef72e3"
+                  panelTitle="Select Term"
+                  label="Division Picker"
+                  context={this.props.context}
+                  onChange={this.onTaxPickerChange}
+                  //onChange={(event) => this.updateFormDataState('division', event)}
+                  isTermSetSelectable={false}
+                />
+                
+                <TextField required={true} 
+                      placeholder="I am required." 
+                      id="divListName"
+                      label="Division QnA List Name"
+                      
+                      value={this.state.divisionQnAListName}
+                      onChanged={(event) => this.updateDivisionListName(event)}
+                />
+                <Label>Editors</Label>
+                { <PeoplePicker 
+                   placeholder='Enter email addresses here'
+                   selectedItems={this.state.Editors}
+                   onChange={(value) => this.updateEditorsState(value)}
+                /> }
+  
+                <PrimaryButton text="Sumbit" onClick={this.onSaveClick} />
+          </div>
+        </div>
+      );
+    }
+
+
+   
   }
 
 

@@ -1,8 +1,10 @@
 import * as React from 'react';
 import styles from './QnAMasterListView.module.scss';
 import { IQnAMasterListViewProps, IQnAMasterListViewState } from './IQnAMasterListViewProps';
+import { DefaultButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import { QnAMasterListForm } from '../QnAMasterForm/QnAMasterListForm';
 
 export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, IQnAMasterListViewState> {
 
@@ -10,7 +12,9 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
   constructor(props: IQnAMasterListViewProps, state: IQnAMasterListViewState) {
     super(props);
     this.state = {
-      masterItems: []
+      masterItems: [],
+      showEditForm: false,
+      editItem: []
     };
   }
 
@@ -19,7 +23,8 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
     let divisionList = newProps.masterListItems.map(item => ({
       Division: item.Division.Label,
       QnAListName: item.QnAListName,
-      Editors: item.Editors//item.Editors.map(u => {return u.title})
+      Editors: item.Editors,//item.Editors.map(u => {return u.title})
+      Id: item.ID
     }));
     console.log(divisionList);
     this.setState({
@@ -51,13 +56,21 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
     });
   }
 
+  // public editItem(row) {
+  //     //show edit form pass row value
+  //   this.setState({
+  //     showEditForm: true,
+  //     editItem: row.row._original
+  //   })
+  // }
 
 
   public render(): React.ReactElement<IQnAMasterListViewProps> {
     return (
       <div className={ styles.qnAMasterList }>
         <div className={ styles.container }>
-        <ReactTable
+            <div> 
+              <ReactTable
               //PaginationComponent={Pagination}
               data={this.state.masterItems}
               defaultPageSize={10}
@@ -80,14 +93,33 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
                       Header: "Editors",
                       accessor: "Editors",
                       Cell: this.renderEditorsField
+                    },
+                    {
+                      Header: "Actions",
+                      accessor: "newQuestionsActions",
+                      Cell: ({ row }) => (
+                        <div>
+                          {/* <button
+                            onClick={() =>
+                              this.editItem({ row })
+                            }
+                          >
+                            Edit
+                          </button>
+                           */}
+                           <DefaultButton
+                              data-automation-id="test"
+                              text="EDIT"
+                              onClick={() => this.props.onEditItem({row})}
+                            />
+                        </div>
+                      ) //onClick={this.addToQnAList({row})}
                     }
                   ]
                 }
               ]}
-              
             />
-            <br />
-         
+            </div>
         </div>
       </div>
     );

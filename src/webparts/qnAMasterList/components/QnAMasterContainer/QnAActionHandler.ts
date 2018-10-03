@@ -22,6 +22,11 @@ export class QnAActionHandler {
         let res = await this.service.saveMasterItemtoSPList(masterListName,itemDetails);
         return null;
     }
+
+    public async updateMasterItemstoSPList(masterListName: string, itemId: number,  userIds: any[]): Promise<any>{
+        let res = await this.service.updateMasterItemstoSPList(masterListName,itemId,userIds);
+        return res;
+    }
     
     public async getUserIds(userInfo: any[]):Promise<any>{
         let res = await this.service.getUserIds(userInfo);
@@ -56,7 +61,11 @@ export class QnAActionHandler {
         return await this.service.addGroupToList(listName, groupId, roleId);
     }
 
-    public removeusersFromGroup: (groupName: string, users: any[]) => Promise<any>;
-    public addnewUsersToGroup:(groupId: number, editors: any[]) => Promise<any>;
+    public async removeusersFromGroup(groupName: string, users: any[]):Promise<any>{
+        return await this.service.removeusersFromGroup(groupName, users);
+    }
+    public async getGroupUsers(groupName: string): Promise<any> {
+        return await this.service.getGroupUsers(groupName);
+    }
     
 }

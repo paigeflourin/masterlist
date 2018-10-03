@@ -28,7 +28,8 @@ export class QnAMasterListService  implements IQnAMasterListService {
             RenderOptions: RenderListDataOptions.ListData,
             ViewXml :  `<View>
                             <Query> 
-                                <ViewFields>
+                                <ViewFields> 
+                                    <FieldRef Name="ID"/>
                                     <FieldRef Name="Division"/>
                                     <FieldRef Name="QnAListName"/>
                                     <FieldRef Name="Editors"/>
@@ -55,6 +56,18 @@ export class QnAMasterListService  implements IQnAMasterListService {
             QnAListName: itemDetails.divisionQnAListName,
             EditorsId: {
                 results: itemDetails.Editors
+            }
+        }).then(i =>{
+            return i;
+        }).catch(err => {
+            return err;
+        });
+    }
+
+    public updateMasterItemstoSPList(masterListName: string, itemId: number,  userIds: any[]): Promise<any> {
+        return sp.web.lists.getByTitle(masterListName).items.getById(itemId).update({
+            EditorsId: {
+                results: userIds
             }
         }).then(i =>{
             return i;
@@ -120,30 +133,6 @@ export class QnAMasterListService  implements IQnAMasterListService {
         .then(() => sp.web.lists.getByTitle(listname).fields.addChoice("Classification",["Public", "Staff", "Student"],6,true))
         .then(() => sp.web.lists.getByTitle(listname).fields.addText("QnAID",255))
         .then(() => sp.web.lists.getByTitle(listname).fields.addMultilineText("Remarks",5,false,false,false,false));
-
-        // if you use add you _must_ include the correct FieldTypeKind in the extended properties
-        // return sp.web.lists.getByTitle(this.listName).fields.add("Questions", "SP.FieldMultiLineText", { 
-        //     FieldTypeKind: 3,
-        // }).then(f => {
-        //     sp.web.lists.getByTitle(this.listName).fields.add("Answer", "SP.FieldMultiLineText", { 
-        //         FieldTypeKind: 3,
-        //     }).then(f => {
-        //         console.log(f);
-        //         sp.web.lists.getByTitle(this.listName).fields.add("Remarks", "SP.FieldMultiLineText", { 
-        //             FieldTypeKind: 3,
-        //         }).then(f => {
-        //             console.log(f);
-        //             let choices = ['Staff', 'Public', 'Student'];
-        //             sp.web.lists.getByTitle(this.listName).fields.add("Classification", "SP.FieldChoice", { 
-        //                 FieldTypeKind: 6,
-        //                 Choices: { results: choices }
-        //             }).then(f => {
-        //                 console.log(f);
-        //             });
-        //         });
-        //     });
-        //     console.log(f);
-        // });
     }
 
 
@@ -230,6 +219,28 @@ export class QnAMasterListService  implements IQnAMasterListService {
         });
     }
 
-    public removeusersFromGroup: (groupName: string, users: any[]) => Promise<any>;
-    public addnewUsersToGroup:(groupId: number, editors: any[]) => Promise<any>;
+    public getGroupUsers(groupName: string): Promise<any> {
+        return sp.web.siteGroups.getByName(groupName).get().then(users => {
+            return users;
+        }, (error) => {
+            return error;
+        }).catch(err =>{
+            return err;
+        });
+    }
+
+    public removeusersFromGroup(groupName: string, users: any[]): Promise<any>{
+        console.log(users);
+        let promises = users.map(u => {
+             return sp.web.siteGroups.getByName(groupName).users.removeByLoginName(u.LoginName);
+         });
+ 
+         return Promise.all(promises).then(res => {
+             console.log(res);
+             return res;
+         }).catch(err => {
+             return err;
+         })
+    }
+
 }

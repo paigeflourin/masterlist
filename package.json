@@ -25,7 +25,8 @@
     "react": "15.6.2",
     "react-dom": "15.6.2",
     "react-table": "^6.8.6",
-    "react-taxonomypicker": "0.0.42"
+    "react-taxonomypicker": "0.0.42",
+    "react-toastify": "^4.4.0"
   },
   "devDependencies": {
     "@microsoft/sp-build-web": "~1.4.1",

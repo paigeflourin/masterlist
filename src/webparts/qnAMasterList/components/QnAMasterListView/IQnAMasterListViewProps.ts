@@ -7,9 +7,13 @@ export interface IQnAMasterListViewProps {
   //numberOfItems: number;
   changeView: Function;
   actionHandler: QnAActionHandler;
+  masterListName: string;
+  onEditItem: Function;
 }
 
 
 export interface IQnAMasterListViewState {
   masterItems: IQnAMaster[];
+  showEditForm: boolean;
+  editItem: any
 }

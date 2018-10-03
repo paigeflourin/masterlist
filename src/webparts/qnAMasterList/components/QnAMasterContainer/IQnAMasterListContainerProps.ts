@@ -20,4 +20,5 @@ export interface IQnAMasterListContainerState {
   masterListName: string;
   masterListItems: any[];
   showForm: boolean;
+  editItem?: any;
 }

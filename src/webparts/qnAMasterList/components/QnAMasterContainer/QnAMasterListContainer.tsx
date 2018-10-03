@@ -29,6 +29,8 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
     this.changeView = this.changeView.bind(this);
     this.actionHandler = new QnAActionHandler(this, this.props.service);
     this.toggleFormView = this.toggleFormView.bind(this);
+    this.onEditItem = this.onEditItem.bind(this);
+    this.processData = this.processData.bind(this);
   }
 
   public componentWillReceiveProps(newProps): void {
@@ -44,6 +46,40 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
     // });
     this.loadData(this.props);
   }
+
+  public processData(data) {
+    console.log(data);
+    this.setState({
+      showForm: false,
+    });
+    this.forceUpdate();
+  }
+
+  public onEditItem(data){
+    console.log(data);
+    this.setState({
+      showForm: true,
+      editItem: data.row._original
+    })
+  }
+
+  private async loadData(props): Promise<void> {
+    console.log("INSIDE LOAD DATA!!");
+    this.setState({
+      isLoading: true
+    });
+    let masterItems = await props.service.getAllMasterListItems(props.masterListName);
+
+    this.setState({
+      masterListItems: masterItems,
+        isLoading: false,
+        showForm: false
+    });
+  }
+
+  private changeView(view: ViewType): void {
+    this.setState({ view });
+  } 
 
   public toggleFormView(val: boolean): void { 
     console.log(val, "toggleform");
@@ -69,14 +105,19 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
             <QnAMasterListForm context={this.props.context} 
               actionHandler={this.actionHandler} 
               masterListName={this.props.masterListName}
-              onSubmission={this.processData}/>
+              onSubmission={this.processData}
+              editItem={this.state.editItem}/>
            ) : (
             <div> 
               <PrimaryButton 
                   text="Add QnA Master List Item" 
                   onClick={() => this.toggleFormView(true)} 
               />
-              <QnAMasterListView masterListItems={this.state.masterListItems} changeView={this.changeView} actionHandler={this.actionHandler} />
+              <QnAMasterListView masterListItems={this.state.masterListItems} 
+              changeView={this.changeView} 
+              actionHandler={this.actionHandler} 
+              masterListName={this.props.masterListName} 
+              onEditItem={this.onEditItem}/>
 
             </div>
           )} 
@@ -85,28 +126,6 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
     );
   }
 
-  public processData(data) {
-    console.log(data);
-    this.setState({
-      showForm: false
-    });
-  }
-  private async loadData(props): Promise<void> {
-    console.log("INSIDE LOAD DATA!!");
-    this.setState({
-      isLoading: true
-    });
-    let masterItems = await props.service.getAllMasterListItems(props.masterListName);
-
-    this.setState({
-      masterListItems: masterItems,
-        isLoading: false,
-        showForm: false
-    });
-  }
-
-  private changeView(view: ViewType): void {
-    this.setState({ view });
-  } 
+ 
 
 }
