@@ -108,6 +108,16 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
           let contributePermission = "1073741827";
           console.log(faqAdminGroup);
 
+
+          //test()
+          //.then(()=> {
+          //    a.then()
+          //})
+          //. then(() => {
+          //  b.then()
+          //})
+          //.then(() => {....}
+
           this.props.actionHandler.createDivisionList(this.state.divisionQnAListName).then(listData => {
               console.log(listData, "in list creation");
               //createListFields 
