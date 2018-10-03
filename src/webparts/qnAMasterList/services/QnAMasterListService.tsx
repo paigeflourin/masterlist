@@ -43,10 +43,10 @@ export class QnAMasterListService  implements IQnAMasterListService {
     }
 
     public saveMasterItemtoSPList(masterListName: string, itemDetails: IQnAMaster): Promise<any>{
-        console.log(itemDetails.division[0], "save to sp");
+        console.log(itemDetails.division, "save to sp");
         return sp.web.lists.getByTitle(masterListName).items.add({
             Title: "",
-            Division: itemDetails.division[0],
+            Division: "CIT", //itemDetails.division[0], key missing
             QnAListName: itemDetails.divisionQnAListName,
             EditorsId: {
                 results: itemDetails.Editors
