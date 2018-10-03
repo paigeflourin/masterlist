@@ -50,11 +50,10 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
 
   public processData(data) {
     console.log(data);
+    this.loadData(this.props);
     this.setState({
-      showForm: false,
+      showForm: false
     });
-    //NOT WORKING need to refresh the state
-    this.forceUpdate();
   }
 
   public onEditItem(data){
@@ -62,15 +61,19 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
     //need to add this is editItem.Editors
     //primaryText: "Admin - Cristina Abellera" [get from data.title]
 
+    // data.row._original.Editors.map((obj) => {
+    //   obj.primaryText = obj.title;
+    //   return obj;
+    // })
+
     this.setState(prevState => ({
       Editors: {
         ...prevState.editItem.Editors,
-        primaryText: data.title
+        primaryText: data.row._original.title
       },
       showForm: true,
       editItem: data.row._original
     }))
-    this.forceUpdate();
   }
 
   private async loadData(props): Promise<void> {

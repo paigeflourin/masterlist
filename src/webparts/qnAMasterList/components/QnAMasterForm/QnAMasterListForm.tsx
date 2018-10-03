@@ -23,7 +23,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
         //this.updateFormDataState = this.updateFormDataState.bind(this);
         this.validateFormData = this.validateFormData.bind(this);
         this.onTaxPickerChange = this.onTaxPickerChange.bind(this);
-        if (!this.props.editItem) {
+        if (this.props.editItem.length == 0) {
             this.isEdit = false;
             this.state = {
               Id: "",
@@ -37,6 +37,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
             };
         } else {
             this.isEdit = true;
+
             this.state = {
                 Id: this.props.editItem.Id, 
                 division: this.props.editItem.Division,
@@ -144,7 +145,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
             const last =        await this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,groupInfo.data.Id,contributePermission);
             const res2 =        await this.props.actionHandler.saveMasterItemtoSPList(this.props.masterListName,formData);
             console.log(res2, "after saving!");
-            this.props.onSubmission("done");
+            this.props.onSubmission(formData);
           })().catch(err=> {
             console.log(err);
             toast.error("error in saving master list item")
@@ -180,7 +181,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
         const addUsers =        await this.props.actionHandler.addUsersToSPGroup(divisionGroupName,groupUsers);
         console.log(addUsers, "after add users!");
         const saveItem =        await this.props.actionHandler.updateMasterItemstoSPList(this.props.masterListName,formData.Id,formData.Editors);
-        this.props.onSubmission("done");
+        this.props.onSubmission(formData);
         this.setLoading(false);
       })().catch(err=> {
         toast.error("error in saving master list item")
