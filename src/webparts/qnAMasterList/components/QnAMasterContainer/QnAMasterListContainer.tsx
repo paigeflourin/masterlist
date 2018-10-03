@@ -24,7 +24,8 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
       isOpen: false,
       masterListName: this.props.masterListName,
       masterListItems: [],
-      showForm: false
+      showForm: false,
+      editItem: []
     };
     this.changeView = this.changeView.bind(this);
     this.actionHandler = new QnAActionHandler(this, this.props.service);
@@ -58,17 +59,16 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
 
   public onEditItem(data){
     console.log(data);
-    this.setState({
-      showForm: true,
-      editItem: data.row._original
-    });
     //need to add this is editItem.Editors
     //primaryText: "Admin - Cristina Abellera" [get from data.title]
+
     this.setState(prevState => ({
       Editors: {
         ...prevState.editItem.Editors,
         primaryText: data.title
-      }
+      },
+      showForm: true,
+      editItem: data.row._original
     }))
     this.forceUpdate();
   }
