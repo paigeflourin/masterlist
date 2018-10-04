@@ -84,112 +84,103 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
     }
     this.setLoading(true);
 
-    let userwithIds = await this.props.actionHandler.getUserIds(this.state.Editors);
-    let ids = userwithIds.map(u => u.Id);
-    console.log(ids, "IDS");
+   
     
+    try{
+      if (!this.isEdit) {
+        console.log("form is new"); 
+        let extractuser = this.state.Editors.map(us => us.User);
+        let userwithIds = await this.props.actionHandler.getUserIds(extractuser);
+        let ids = userwithIds.map(u => u.Id);
 
-    if (!this.isEdit) {
-      console.log("form is new"); 
+        const formData: IQnAMaster = {
+          division: this.state.division,
+          divisionQnAListName: this.state.divisionQnAListName,
+          Editors: ids
+        };
 
-      const formData: IQnAMaster = {
-        division: this.state.division,
-        divisionQnAListName: this.state.divisionQnAListName,
-        Editors: ids
-      };
-  
-        let siteLists = await this.props.actionHandler.getAllDivisionLists(); 
-        let spgroups = await this.props.actionHandler.getAllSharePointGroups();
-        
-        let divisionGroupName = this.state.divisionName + " Editors";
-        let divisionExists = siteLists.find(l => l.Title == this.state.divisionQnAListName);
-        let groupExists = spgroups.find(g => g.LoginName == divisionGroupName);
-        
-        console.log(divisionExists, " and group ", groupExists);
+          let siteLists = await this.props.actionHandler.getAllDivisionLists(); 
+          let spgroups = await this.props.actionHandler.getAllSharePointGroups();
+          
+          let divisionGroupName = this.state.divisionName + " Editors";
+          let divisionExists = siteLists.find(l => l.Title == this.state.divisionQnAListName);
+          let groupExists = spgroups.find(g => g.LoginName == divisionGroupName);
+          
+          if((divisionExists === undefined) && (groupExists === undefined )){
 
-        if((divisionExists === undefined) && (groupExists === undefined )){
+            let faqAdminGroup = spgroups.filter(g => g.Title == "FAQ Administrators");
+            let fullControlPermission = "1073741829"; //full controll = 1073741829
+            let contributePermission = "1073741827";
+            console.log(faqAdminGroup);
 
-          let faqAdminGroup = spgroups.filter(g => g.Title == "FAQ Administrators");
-          let fullControlPermission = "1073741829"; //full controll = 1073741829
-          let contributePermission = "1073741827";
-          console.log(faqAdminGroup);
-
-
-          // this.props.actionHandler.createDivisionList(this.state.divisionQnAListName)
-          // .then(listData => this.props.actionHandler.createListFields(listData.data.Title).then(() =>  listData))
-          // .then(listData => this.props.actionHandler.addFieldsToView(listData.data.Title))
-          // .then(() => this.props.actionHandler.createSharePointGroup(this.state.divisionName))
-          // .then(groupInfo => this.props.actionHandler.addUsersToSPGroup(groupInfo.data.Title, userwithIds).then(() => groupInfo))
-          // .then(groupInfo => this.props.actionHandler.breakListPermission(this.state.divisionQnAListName).then(() => groupInfo))
-          // .then(groupInfo => this.props.actionHandler.addGroupToList(this.state.divisionQnAListName, faqAdminGroup[0].Id, fullControlPermission).then(() => groupInfo))
-          // .then(groupInfo => this.props.actionHandler.addGroupToList(this.state.divisionQnAListName, groupInfo.data.Id, contributePermission))
-          // .then(() => this.props.actionHandler.saveMasterItemtoSPList(this.props.masterListName, formData))
-          // .then(res2 => {
-
-          //   console.log(res2, "after saving!")
-          //   this.props.onSubmission(res2);
-          // }).catch(err=> {
-          //   console.log(err);
-          // });
-          (async() => {
-            const listData =    await this.props.actionHandler.createDivisionList(this.state.divisionQnAListName)
-            console.log(listData, "in list creation");
-            const res =         await this.props.actionHandler.createListFields(listData.data.Title)
-            console.log(res, "after list field creation");
-            const r =           await this.props.actionHandler.addFieldsToView(listData.data.Title);
-            const groupInfo =   await this.props.actionHandler.createSharePointGroup(this.state.divisionName);
-            console.log(groupInfo, "in group creation");
-            const afterAdd =    await this.props.actionHandler.addUsersToSPGroup(groupInfo.data.Title,userwithIds);
-            const afterBreak =  await this.props.actionHandler.breakListPermission(this.state.divisionQnAListName);
-            const admin =       await this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,faqAdminGroup[0].Id,fullControlPermission);
-            const last =        await this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,groupInfo.data.Id,contributePermission);
-            const res2 =        await this.props.actionHandler.saveMasterItemtoSPList(this.props.masterListName,formData);
-            console.log(res2, "after saving!");
-            this.props.onSubmission(formData);
-          })().catch(err=> {
-            console.log(err);
-            toast.error("error in saving master list item")
+            (async() => {
+              const listData =    await this.props.actionHandler.createDivisionList(this.state.divisionQnAListName)
+              console.log(listData, "in list creation");
+              const res =         await this.props.actionHandler.createListFields(listData.data.Title)
+              console.log(res, "after list field creation");
+              const r =           await this.props.actionHandler.addFieldsToView(listData.data.Title);
+              const groupInfo =   await this.props.actionHandler.createSharePointGroup(this.state.divisionName);
+              console.log(groupInfo, "in group creation");
+              const afterAdd =    await this.props.actionHandler.addUsersToSPGroup(groupInfo.data.Title,userwithIds);
+              const afterBreak =  await this.props.actionHandler.breakListPermission(this.state.divisionQnAListName);
+              const admin =       await this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,faqAdminGroup[0].Id,fullControlPermission);
+              const last =        await this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,groupInfo.data.Id,contributePermission);
+              const res2 =        await this.props.actionHandler.saveMasterItemtoSPList(this.props.masterListName,formData);
+              console.log(res2, "after saving!");
+              this.props.onSubmission(formData);
+            })().catch(err=> {
+              console.log(err);
+              toast.error("error in saving master list item")
+              this.setLoading(false);
+              this.props.onSubmission(err);
+            });
+          
+          } else if (divisionExists !== undefined){
+            toast.error("Division is not unique");
             this.setLoading(false);
-            this.props.onSubmission(err);
-          });
+          } else if(groupExists !== undefined) {
+            toast.error("Group is not unique");
+            this.setLoading(false);
+          }
+      } else {
+        console.log("EDIT");
+
+        let userwithIds = await this.props.actionHandler.getUserIds(this.state.Editors);
+        let ids = userwithIds.map(u => u.Id);
+        console.log(ids, "IDS");
+
+        let divisionGroupName = this.state.divisionName + " Editors";
+        const formData: IQnAMaster = {
+          Id: this.state.Id,
+          division: this.state.division,
+          divisionQnAListName: this.state.divisionQnAListName,
+          Editors: ids
+        };
+
         
-        } else if (divisionExists !== undefined){
-          toast.error("Division is not unique");
-          console.log("division not unique");
+        (async() => {
+          const groupUsers =    await this.props.actionHandler.getGroupUsers(divisionGroupName);
+          console.log(groupUsers, "in getgroupusers");
+          const res2 =        await this.props.actionHandler.removeusersFromGroup(divisionGroupName,groupUsers);
+          console.log(res2, "after user removal!");
+          const addUsers =        await this.props.actionHandler.addUsersToSPGroup(divisionGroupName,groupUsers);
+          console.log(addUsers, "after add users!");
+          const saveItem =        await this.props.actionHandler.updateMasterItemstoSPList(this.props.masterListName,formData.Id,formData.Editors);
+          this.props.onSubmission(formData);
           this.setLoading(false);
-        } else if(groupExists !== undefined) {
-          toast.error("Group is not unique");
-          console.log("group not unique");
+        })().catch(err=> {
+          toast.error("error in saving master list item")
           this.setLoading(false);
-        }
-    } else {
-      console.log("EDIT");
-      let divisionGroupName = this.state.divisionName + " Editors";
-      const formData: IQnAMaster = {
-        Id: this.state.Id,
-        division: this.state.division,
-        divisionQnAListName: this.state.divisionQnAListName,
-        Editors: ids
-      };
+          this.props.onSubmission(err);
+        });
 
-      
-      (async() => {
-        const groupUsers =    await this.props.actionHandler.getGroupUsers(divisionGroupName);
-        console.log(groupUsers, "in getgroupusers");
-        const res2 =        await this.props.actionHandler.removeusersFromGroup(divisionGroupName,groupUsers);
-        console.log(res2, "after user removal!");
-        const addUsers =        await this.props.actionHandler.addUsersToSPGroup(divisionGroupName,groupUsers);
-        console.log(addUsers, "after add users!");
-        const saveItem =        await this.props.actionHandler.updateMasterItemstoSPList(this.props.masterListName,formData.Id,formData.Editors);
-        this.props.onSubmission(formData);
-        this.setLoading(false);
-      })().catch(err=> {
-        toast.error("error in saving master list item")
-        this.setLoading(false);
-        this.props.onSubmission(err);
-      });
-
+      }
+    } catch (err) {
+      toast.error("Something went wrong")
+      console.log(err);
+      this.setLoading(false);
     }
+   
   }
 
   private updateEditorsState(event) {

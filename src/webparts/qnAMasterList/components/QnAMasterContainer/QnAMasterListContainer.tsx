@@ -41,10 +41,6 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
   }
 
   public async componentDidMount(): Promise<void> {
-    // this.setState({
-    //   masterListItems: await this.actionHandler.getAllMasterListItems(),
-    //     isDataLoaded: true,
-    // });
     this.loadData(this.props);
   }
 
@@ -60,6 +56,7 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
     console.log(data.row._original.Editors);
     let newEd = data.row._original.Editors.map(ed =>{
       ed.primaryText = ed.title;
+      ed.Description = ed.email;
       return ed;
     })
     console.log(newEd);
@@ -73,10 +70,6 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
     const { row } = data
     row._original.Editors = newEd
     this.setState(prevState => ({
-      // Editors: {
-      //   ...prevState.editItem.Editors,
-      //   primaryText: data.row._original.title
-      // },
       showForm: true,
       editItem: row._original
     }))
