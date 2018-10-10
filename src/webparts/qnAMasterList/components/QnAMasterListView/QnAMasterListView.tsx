@@ -5,6 +5,8 @@ import { DefaultButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { QnAMasterListForm } from '../QnAMasterForm/QnAMasterListForm';
+import { LoadingSpinner } from '../LoadingSpinner/LoadingSpinner';
+
 
 export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, IQnAMasterListViewState> {
 
@@ -14,12 +16,16 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
     this.state = {
       masterItems: [],
       showEditForm: false,
-      editItem: []
+      editItem: [],
+      isLoading: false
     };
   }
 
   public componentWillReceiveProps(newProps): void {
     console.log("INSIDE WILL RECEIVE PROPS", newProps);
+    this.setState({
+      isLoading: true
+    });
     let divisionList = newProps.masterListItems.map(item => ({
       Division: item.Division.Label,
       QnAListName: item.QnAListName,
@@ -28,29 +34,35 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
     }));
     console.log(divisionList);
     this.setState({
-      masterItems: divisionList
+      masterItems: divisionList,
+      isLoading: false
     });
 
   }
 
   public async componentDidMount(): Promise<void> {
+    console.log("inside component did mount");
     // this.setState({
     //   masterListItems: await this.actionHandler.getAllMasterListItems(),
     //     isDataLoaded: true,
     // });
-
-    let divisionList = this.props.masterListItems.map(item => ({
-      Division: item.Division.Label,
-      QnAListName: item.QnAListName,
-      Editors: item.Editors,//item.Editors.map(u => {return u.title})
-      Id: item.ID
-    }));
-
+    if(this.props.masterListItems.length !== 0) {
+      this.setState({
+        isLoading: true
+      });
+      let divisionList = this.props.masterListItems.map(item => ({
+        Division: item.Division.Label,
+        QnAListName: item.QnAListName,
+        Editors: item.Editors,//item.Editors.map(u => {return u.title})
+        Id: item.ID
+      }));
+      console.log(divisionList);
+      this.setState({
+        masterItems: divisionList,
+        isLoading: false
+      });
+    }
     
-    console.log(this.props, divisionList);
-    this.setState({
-      masterItems: divisionList
-    });
   }
 
   public renderEditorsField(cellInfo) {
@@ -79,8 +91,10 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
 
   public render(): React.ReactElement<IQnAMasterListViewProps> {
     return (
+      
       <div className={ styles.qnAMasterList }>
         <div className={ styles.container }>
+          {this.state.isLoading && <LoadingSpinner />}
             <div> 
               <ReactTable
               data={this.state.masterItems}

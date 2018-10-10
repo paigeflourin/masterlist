@@ -16,4 +16,5 @@ export interface IQnAMasterListViewState {
   masterItems: any[];
   showEditForm: boolean;
   editItem: any;
+  isLoading: boolean;
 }
