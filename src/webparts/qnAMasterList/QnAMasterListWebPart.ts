@@ -12,6 +12,7 @@ import { QnAMasterListContainer } from './components/QnAMasterContainer/QnAMaste
 import { IQnAMasterListContainerProps } from './components/QnAMasterContainer/IQnAMasterListContainerProps';
 import { IQnAMasterListService } from './services/IQnAMasterListService';
 import { QnAMasterListService } from './services/QnAMasterListService';
+import { sp } from '@pnp/sp';
 
 export interface IQnAMasterListWebPartProps {
   description: string;
@@ -30,7 +31,16 @@ export default class QnAMasterListWebPart extends BaseClientSideWebPart<IQnAMast
     //} else {
       this.service = new QnAMasterListService(this.properties.masterListname, this.context);
     //}
-      return super.onInit();
+      return super.onInit().then(_ => {
+        sp.setup({
+          spfxContext: this.context,
+          sp: {
+            headers: {
+              Accept: 'application/json; odata=verbose'
+            }
+          }
+        });
+      });
 
       //this.service = new QnAMasterListService(this.properties.masterListName, this.context);
       //return super.onInit();
