@@ -259,8 +259,8 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
             
                 <TaxonomyPicker
                   allowMultipleSelections={false}
-                  termsetNameOrID="9a72c139-d649-4342-970f-a53fe0ef72e3"
-                 // termsetNameOrID="Department"
+                  //termsetNameOrID="9a72c139-d649-4342-970f-a53fe0ef72e3"
+                  termsetNameOrID="Department"
                   panelTitle="Select Term"
                   label="Division Picker"
                   context={this.props.context}
