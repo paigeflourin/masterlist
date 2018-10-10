@@ -114,9 +114,9 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
             console.log(faqAdminGroup);
 
             (async() => {
-              const listData =    await this.props.actionHandler.createDivisionList(this.state.divisionQnAListName)
+              const listData =    await this.props.actionHandler.createDivisionList(this.state.divisionQnAListName);
               console.log(listData, "in list creation");
-              const res =         await this.props.actionHandler.createListFields(listData.data.Title)
+              const res =         await this.props.actionHandler.createListFields(listData.data.Title);
               console.log(res, "after list field creation");
               const r =           await this.props.actionHandler.addFieldsToView(listData.data.Title);
               const groupInfo =   await this.props.actionHandler.createSharePointGroup(this.state.divisionName);
@@ -130,7 +130,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
               this.props.onSubmission(formData);
             })().catch(err=> {
               console.log(err);
-              toast.error("error in saving master list item")
+              toast.error("error in saving master list item");
               this.setLoading(false);
               this.props.onSubmission(err);
             });
@@ -169,14 +169,14 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
           this.props.onSubmission(formData);
           this.setLoading(false);
         })().catch(err=> {
-          toast.error("error in saving master list item")
+          toast.error("error in saving master list item");
           this.setLoading(false);
           this.props.onSubmission(err);
         });
 
       }
     } catch (err) {
-      toast.error("Something went wrong")
+      toast.error("Something went wrong");
       console.log(err);
       this.setLoading(false);
     }

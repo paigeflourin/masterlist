@@ -58,7 +58,7 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
       ed.primaryText = ed.title;
       ed.Description = ed.email;
       return ed;
-    })
+    });
     console.log(newEd);
     //need to add this is editItem.Editors
     //primaryText: "Admin - Cristina Abellera" [get from data.title]
@@ -67,12 +67,12 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
     //   obj.primaryText = obj.title;
     //   return obj;
     // })
-    const { row } = data
-    row._original.Editors = newEd
+    const { row } = data;
+    row._original.Editors = newEd;
     this.setState(prevState => ({
       showForm: true,
       editItem: row._original
-    }))
+    }));
   }
 
   private async loadData(props): Promise<void> {

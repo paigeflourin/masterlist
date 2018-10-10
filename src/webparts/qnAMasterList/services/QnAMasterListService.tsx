@@ -92,7 +92,7 @@ export class QnAMasterListService  implements IQnAMasterListService {
            return  res;
         })
         .catch(err => { 
-            return err
+            return err; 
         });
 
         //return resp;
@@ -139,16 +139,16 @@ export class QnAMasterListService  implements IQnAMasterListService {
     public addFieldsToView(listname: string): Promise<any>{ //, fieldsToAdd: any[]
 
         return sp.web.lists.getByTitle(listname).defaultView.fields.add("Questions").then(a => {
-            sp.web.lists.getByTitle(listname).defaultView.fields.add("Answers")
+            sp.web.lists.getByTitle(listname).defaultView.fields.add("Answers");
         }).then(()=>{
-            sp.web.lists.getByTitle(listname).defaultView.fields.add("Classification")
+            sp.web.lists.getByTitle(listname).defaultView.fields.add("Classification");
         }).then(()=> {
-            sp.web.lists.getByTitle(listname).defaultView.fields.add("QnAID")
+            sp.web.lists.getByTitle(listname).defaultView.fields.add("QnAID");
         }).then(()=> {
-            sp.web.lists.getByTitle(listname).defaultView.fields.add("Remarks")
+            sp.web.lists.getByTitle(listname).defaultView.fields.add("Remarks");
         }).catch(err=>{
             return err;
-        })
+        });
 
        
         // const list = sp.web.lists.getByTitle(listname);
@@ -197,7 +197,7 @@ export class QnAMasterListService  implements IQnAMasterListService {
             return res;
         }).catch(err => {
             return err;
-        })
+        });
          
     }
     public breakListPermission(listName: string):Promise<any>{
@@ -247,7 +247,7 @@ export class QnAMasterListService  implements IQnAMasterListService {
             return res;
         }).catch(err => {
             return err;
-        })
+        });
 
     }
 

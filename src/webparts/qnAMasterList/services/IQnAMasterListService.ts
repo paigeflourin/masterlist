@@ -4,7 +4,7 @@ import { IQnAMaster } from "../models/IQnAMaster";
 export interface IQnAMasterListService {
     getAllMasterListItems: (masterListName: string) => Promise<any>;
     saveMasterItemtoSPList: (masterListName: string, itemDetailds: IQnAMaster) => Promise<any>;
-    updateMasterItemstoSPList:(masterListName: string, itemId: number,  userIds: any[])=> Promise<any>
+    updateMasterItemstoSPList:(masterListName: string, itemId: number,  userIds: any[])=> Promise<any>;
     getUserIds:(userInfo: any[]) => Promise<any>;
     getAllDivisionLists: () => Promise<any>;
     getAllSharePointGroups: () => Promise<any>;

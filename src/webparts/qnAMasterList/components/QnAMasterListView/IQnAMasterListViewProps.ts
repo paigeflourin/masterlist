@@ -15,5 +15,5 @@ export interface IQnAMasterListViewProps {
 export interface IQnAMasterListViewState {
   masterItems: IQnAMaster[];
   showEditForm: boolean;
-  editItem: any
+  editItem: any;
 }
