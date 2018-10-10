@@ -7,7 +7,7 @@ import { QnAMasterListView } from '../QnAMasterListView/QnAMasterListView';
 import { QnAActionHandler } from './QnAActionHandler';
 import { ViewType } from '../../helper/ViewType';
 import { PrimaryButton } from 'office-ui-fabric-react/lib/Button';
-
+import { ToastContainer, toast } from 'react-toastify';
 
 export class QnAMasterListContainer extends React.Component<IQnAMasterListContainerProps, IQnAMasterListContainerState> {
 
@@ -32,6 +32,7 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
     this.toggleFormView = this.toggleFormView.bind(this);
     this.onEditItem = this.onEditItem.bind(this);
     this.processData = this.processData.bind(this);
+    this.cancelSubmit = this.cancelSubmit.bind(this);
   }
 
   public componentWillReceiveProps(newProps): void {
@@ -44,11 +45,18 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
     this.loadData(this.props);
   }
 
-  public processData(data) {
-    console.log(data);
+  public processData() {
     this.loadData(this.props);
     this.setState({
       showForm: false
+    });
+  }
+
+  public cancelSubmit(){
+    this.loadData(this.props);
+    this.setState({
+      showForm: false,
+      editItem: []
     });
   }
 
@@ -110,7 +118,7 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
       <div className={ styles.qnAMasterList }>
         <div className={ styles.container }>
           
-
+        <ToastContainer />
         <h1>QnA Master List</h1> 
          {console.log(this.state.showForm, "show form ")}
           {this.state.showForm ? ( 
@@ -118,6 +126,7 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
               actionHandler={this.actionHandler} 
               masterListName={this.props.masterListName}
               onSubmission={this.processData}
+              onCancel={this.cancelSubmit}
               editItem={this.state.editItem}/>
            ) : (
             <div> 

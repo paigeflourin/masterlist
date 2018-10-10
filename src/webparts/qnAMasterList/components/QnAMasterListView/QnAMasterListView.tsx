@@ -38,9 +38,18 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
     //   masterListItems: await this.actionHandler.getAllMasterListItems(),
     //     isDataLoaded: true,
     // });
-    console.log(this.props);
+
+    let divisionList = this.props.masterListItems.map(item => ({
+      Division: item.Division.Label,
+      QnAListName: item.QnAListName,
+      Editors: item.Editors,//item.Editors.map(u => {return u.title})
+      Id: item.ID
+    }));
+
+    
+    console.log(this.props, divisionList);
     this.setState({
-      masterItems: this.props.masterListItems
+      masterItems: divisionList
     });
   }
 
@@ -56,14 +65,17 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
     });
   }
 
-  // public editItem(row) {
-  //     //show edit form pass row value
-  //   this.setState({
-  //     showEditForm: true,
-  //     editItem: row.row._original
-  //   })
+  // public renderDivisionField(cellInfo) {
+  //   console.log(cellInfo.original.Division);
+  //   return cellInfo.original.Division.map(division => {
+  //     //console.log(editor)
+  //     return (
+  //       <div>
+  //         <span> {division.Label} </span>
+  //       </div>
+  //     );
+  //   });
   // }
-
 
   public render(): React.ReactElement<IQnAMasterListViewProps> {
     return (
@@ -71,19 +83,16 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
         <div className={ styles.container }>
             <div> 
               <ReactTable
-              //PaginationComponent={Pagination}
               data={this.state.masterItems}
               defaultPageSize={10}
               className="-striped -highlight"
-              // filtered={this.state.filtered}
-              // onFilteredChange={this.onFilteredChange.bind(this)}
-              // filterable
               columns={[
                 {
                   columns: [
                     {
                       Header: "Division",
                       accessor: "Division"
+                     // Cell: this.renderDivisionField
                     },
                     {
                       Header: "QnA List Name",
@@ -99,21 +108,13 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
                       accessor: "newQuestionsActions",
                       Cell: ({ row }) => (
                         <div>
-                          {/* <button
-                            onClick={() =>
-                              this.editItem({ row })
-                            }
-                          >
-                            Edit
-                          </button>
-                           */}
                            <DefaultButton
                               data-automation-id="test"
                               text="EDIT"
                               onClick={() => this.props.onEditItem({row})}
                             />
                         </div>
-                      ) //onClick={this.addToQnAList({row})}
+                      )
                     }
                   ]
                 }

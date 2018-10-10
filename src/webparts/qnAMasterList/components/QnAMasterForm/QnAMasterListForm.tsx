@@ -19,8 +19,6 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
         super(props);
         this.onSaveClick = this.onSaveClick.bind(this);
         this.setLoading = this.setLoading.bind(this);
-        //this.onSaveCallback = this.onSaveCallback.bind(this);
-        //this.updateFormDataState = this.updateFormDataState.bind(this);
         this.validateFormData = this.validateFormData.bind(this);
         this.onTaxPickerChange = this.onTaxPickerChange.bind(this);
         if (this.props.editItem.length == 0) {
@@ -37,7 +35,6 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
             };
         } else {
             this.isEdit = true;
-
             this.state = {
                 Id: this.props.editItem.Id, 
                 division: this.props.editItem.Division,
@@ -83,14 +80,12 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
         return;
     }
     this.setLoading(true);
-
-   
-    
+  
     try{
       if (!this.isEdit) {
         console.log("form is new"); 
         let extractuser = this.state.Editors.map(us => us.User);
-        let userwithIds = await this.props.actionHandler.getUserIds(extractuser);
+        let userwithIds = await this.props.actionHandler.getUserIds(this.state.Editors);
         let ids = userwithIds.map(u => u.Id);
 
         const formData: IQnAMaster = {
@@ -127,12 +122,13 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
               const last =        await this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,groupInfo.data.Id,contributePermission);
               const res2 =        await this.props.actionHandler.saveMasterItemtoSPList(this.props.masterListName,formData);
               console.log(res2, "after saving!");
-              this.props.onSubmission(formData);
+              toast.success("Successfully saved Item");
+              this.props.onSubmission();
             })().catch(err=> {
               console.log(err);
               toast.error("error in saving master list item");
               this.setLoading(false);
-              this.props.onSubmission(err);
+              this.props.onSubmission();
             });
           
           } else if (divisionExists !== undefined){
@@ -166,12 +162,14 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
           const addUsers =        await this.props.actionHandler.addUsersToSPGroup(divisionGroupName,groupUsers);
           console.log(addUsers, "after add users!");
           const saveItem =        await this.props.actionHandler.updateMasterItemstoSPList(this.props.masterListName,formData.Id,formData.Editors);
-          this.props.onSubmission(formData);
+          toast.success("Successfully saved Item");
+          this.props.onSubmission();
           this.setLoading(false);
         })().catch(err=> {
+          console.log(err);
           toast.error("error in saving master list item");
           this.setLoading(false);
-          this.props.onSubmission(err);
+          this.props.onSubmission();
         });
 
       }
@@ -212,7 +210,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
       return (
         <div className={ styles.qnAMasterList }>
           <div className={ styles.container }>
-            <ToastContainer />
+         
             {this.state.isLoading && <LoadingSpinner />}
             
             <TextField required={true} 
@@ -235,6 +233,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
                 /> }
   
                 <PrimaryButton text="Sumbit" onClick={this.onSaveClick} />
+                <PrimaryButton text="Cancel" onClick={() => this.props.onCancel(null)} />
 
           </div>
         </div>
@@ -244,7 +243,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
       return (  
         <div className={ styles.qnAMasterList }>
           <div className={ styles.container }>
-            <ToastContainer />
+            
             {this.state.isLoading && <LoadingSpinner />}
             
                 <TaxonomyPicker
@@ -274,6 +273,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
                 /> }
   
                 <PrimaryButton text="Sumbit" onClick={this.onSaveClick} />
+                <PrimaryButton text="Cancel" onClick={() => this.props.onCancel(null)} />
           </div>
         </div>
       );

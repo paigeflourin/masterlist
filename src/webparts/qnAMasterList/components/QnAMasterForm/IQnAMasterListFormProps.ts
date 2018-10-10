@@ -11,6 +11,7 @@ export interface IQnAMasterListFormProps {
   onClick?: void;
   masterListName: string;
   onSubmission?: Function;
+  onCancel?: Function;
 }
 
 

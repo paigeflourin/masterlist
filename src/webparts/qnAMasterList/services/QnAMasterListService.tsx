@@ -80,8 +80,8 @@ export class QnAMasterListService  implements IQnAMasterListService {
         //let promises = [];
         let resp;
         let promises = userInfo.map( u => {
-            console.log(u.Description);
-            return sp.web.siteUsers.getByEmail(u.Description).get().then(); //res => {
+            console.log(u.user.Description);
+            return sp.web.siteUsers.getByEmail(u.user.Description).get().then(); //res => {
               //  return res.Id;   
             //});
         });
