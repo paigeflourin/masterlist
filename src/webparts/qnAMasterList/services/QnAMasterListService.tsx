@@ -175,7 +175,7 @@ export class QnAMasterListService  implements IQnAMasterListService {
 
     public createSharePointGroup(division: string): Promise<any>{
         return sp.web.siteGroups.add({
-            Title: division + " Editors",
+            Title: division,
             Description: "Editors for " + division + " list"
         }).then(res => {
             return res;

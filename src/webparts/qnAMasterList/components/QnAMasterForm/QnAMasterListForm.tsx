@@ -104,9 +104,18 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
           if((divisionExists === undefined) && (groupExists === undefined )){
 
             let faqAdminGroup = spgroups.filter(g => g.Title == "FAQ Administrators");
+            let faqAdminGrpid;
             let fullControlPermission = "1073741829"; //full controll = 1073741829
             let contributePermission = "1073741827";
             console.log(faqAdminGroup);
+            if(faqAdminGroup.length == 0){
+              //create admin group
+              let res = await this.props.actionHandler.createSharePointGroup("FAQ Administrators");
+              faqAdminGrpid = res.data.Id;
+            } else {
+              faqAdminGrpid = spgroups.filter(g => g.Title == "FAQ Administrators")[0].Id;
+            }
+
 
             (async() => {
               const listData =    await this.props.actionHandler.createDivisionList(this.state.divisionQnAListName);
@@ -114,11 +123,11 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
               const res =         await this.props.actionHandler.createListFields(listData.data.Title);
               console.log(res, "after list field creation");
               const r =           await this.props.actionHandler.addFieldsToView(listData.data.Title);
-              const groupInfo =   await this.props.actionHandler.createSharePointGroup(this.state.divisionName);
+              const groupInfo =   await this.props.actionHandler.createSharePointGroup(divisionGroupName);
               console.log(groupInfo, "in group creation");
               const afterAdd =    await this.props.actionHandler.addUsersToSPGroup(groupInfo.data.Title,userwithIds);
               const afterBreak =  await this.props.actionHandler.breakListPermission(this.state.divisionQnAListName);
-              const admin =       await this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,faqAdminGroup[0].Id,fullControlPermission);
+              const admin =       await this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,faqAdminGrpid,fullControlPermission);
               const last =        await this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,groupInfo.data.Id,contributePermission);
               const res2 =        await this.props.actionHandler.saveMasterItemtoSPList(this.props.masterListName,formData);
               console.log(res2, "after saving!");
@@ -196,10 +205,12 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
 }
   private onTaxPickerChange(terms : IPickerTerms) {
     console.log("Terms", terms);
-    this.setState({
-      division: terms,
-      divisionName: terms[0].name
-    });
+    if(terms.length !== 0){
+      this.setState({
+        division: terms,
+        divisionName: terms[0].name
+      });
+    }
   }
 
   public render(): React.ReactElement<IQnAMasterListFormProps> {
@@ -249,6 +260,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
                 <TaxonomyPicker
                   allowMultipleSelections={false}
                   termsetNameOrID="9a72c139-d649-4342-970f-a53fe0ef72e3"
+                 // termsetNameOrID="Department"
                   panelTitle="Select Term"
                   label="Division Picker"
                   context={this.props.context}
