@@ -131,7 +131,7 @@ export class QnAMasterListService  implements IQnAMasterListService {
         return sp.web.lists.getByTitle(listname).fields.addMultilineText("Questions",6,false,false,false,false)
         .then(() => sp.web.lists.getByTitle(listname).fields.addMultilineText("Answer",5,false,false,false,false))
         .then(() => sp.web.lists.getByTitle(listname).fields.addChoice("Classification",["Public", "Staff", "Student"],6,true))
-        .then(() => sp.web.lists.getByTitle(listname).fields.addText("QnAID",255))
+        .then(() => sp.web.lists.getByTitle(listname).fields.addNumber("QnAID",0))
         .then(() => sp.web.lists.getByTitle(listname).fields.addMultilineText("Remarks",5,false,false,false,false));
     }
 
