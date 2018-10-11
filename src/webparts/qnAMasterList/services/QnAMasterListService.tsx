@@ -138,15 +138,12 @@ export class QnAMasterListService  implements IQnAMasterListService {
 
     public addFieldsToView(listname: string): Promise<any>{ //, fieldsToAdd: any[]
 
-        return sp.web.lists.getByTitle(listname).defaultView.fields.add("Questions").then(a => {
-            sp.web.lists.getByTitle(listname).defaultView.fields.add("Answers");
-        }).then(()=>{
-            sp.web.lists.getByTitle(listname).defaultView.fields.add("Classification");
-        }).then(()=> {
-            sp.web.lists.getByTitle(listname).defaultView.fields.add("QnAID");
-        }).then(()=> {
-            sp.web.lists.getByTitle(listname).defaultView.fields.add("Remarks");
-        }).catch(err=>{
+        return sp.web.lists.getByTitle(listname).defaultView.fields.add("Questions")
+        .then(() => sp.web.lists.getByTitle(listname).defaultView.fields.add("Answers"))
+        .then(()=> sp.web.lists.getByTitle(listname).defaultView.fields.add("Classification"))
+        .then(()=> sp.web.lists.getByTitle(listname).defaultView.fields.add("QnAID"))
+        .then(()=> sp.web.lists.getByTitle(listname).defaultView.fields.add("Remarks"))
+        .catch(err=>{
             return err;
         });
 
