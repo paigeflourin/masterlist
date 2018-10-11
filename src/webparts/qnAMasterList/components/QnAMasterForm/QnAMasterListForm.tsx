@@ -159,7 +159,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
         let newuserids = [];
         for (let ed of this.state.Editors) {
           if(ed.id){
-            existuserids.push(ed.id);
+            existuserids.push(parseInt(ed.id));
           } else {
             newusers.push(ed);
             let userwithIds = await this.props.actionHandler.getUserIds(newusers);
