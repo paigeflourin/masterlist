@@ -78,6 +78,7 @@ export class QnAMasterListService  implements IQnAMasterListService {
 
     public getUserIds(userInfo: any[]): Promise<any> {
         //let promises = [];
+        //Issue with editing since the edited item does not return the login name.
         let resp;
         let promises = userInfo.map( u => {
             console.log(u.user);

@@ -149,7 +149,17 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
           }
       } else {
         console.log("EDIT");
-
+        //need to get the loginname of the user because the editors here does not return the loginname the returned item for edit is below:
+      //         Description: "eric.ong@pleodata.com"
+      // department: "Operations"
+      // email: "eric.ong@pleodata.com"
+      // id: "6"
+      // jobTitle: "Head, Operations"
+      // picture: "https://pleodata-my.sharepoint.com:443/User%20Photos/Profile%20Pictures/eric_ong_pleodata_com_MThumb.jpg?t=63634815313"
+      // primaryText: "Eric Ong"
+      // sip: "eric.ong@pleodata.com"
+      // title: "Eric Ong"
+      // value: "Eric Ong"
         let userwithIds = await this.props.actionHandler.getUserIds(this.state.Editors);
         let ids = userwithIds.map(u => u.Id);
         console.log(ids, "IDS");
