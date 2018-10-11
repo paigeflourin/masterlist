@@ -1,5 +1,5 @@
 import * as React from 'react';
-import styles from '../QnAMasterList.module.scss';
+import styles from './QnAMasterListForm.module.scss';
 import { IQnAMasterListFormProps , IQnAMasterListFormState} from './IQnAMasterListFormProps';
 import { escape } from '@microsoft/sp-lodash-subset';
 import { PrimaryButton } from 'office-ui-fabric-react/lib/Button';
@@ -29,7 +29,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
               divisionName: "",
               divisionQnAListName: "",
               Editors: [],
-              EditorsId: [],
+              //EditorsId: [],
               Errors: [],
               isLoading: false,
             };
@@ -42,7 +42,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
                 divisionQnAListName: this.props.editItem.QnAListName,
                 Editors: this.props.editItem.Editors,
                 Errors: [],
-                EditorsId: this.props.editItem.Editors.map(u => u.id),
+                //EditorsId: this.props.editItem.Editors.map(u => u.id),
                 isLoading: false
 
             };
@@ -148,28 +148,34 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
             this.setLoading(false);
           }
       } else {
-        console.log("EDIT");
-        //need to get the loginname of the user because the editors here does not return the loginname the returned item for edit is below:
-      //         Description: "eric.ong@pleodata.com"
-      // department: "Operations"
-      // email: "eric.ong@pleodata.com"
-      // id: "6"
-      // jobTitle: "Head, Operations"
-      // picture: "https://pleodata-my.sharepoint.com:443/User%20Photos/Profile%20Pictures/eric_ong_pleodata_com_MThumb.jpg?t=63634815313"
-      // primaryText: "Eric Ong"
-      // sip: "eric.ong@pleodata.com"
-      // title: "Eric Ong"
-      // value: "Eric Ong"
-        let userwithIds = await this.props.actionHandler.getUserIds(this.state.Editors);
-        let ids = userwithIds.map(u => u.Id);
-        console.log(ids, "IDS");
+        console.log("EDIT", this.state.Editors);
 
+        //TODO NEED TO EXTRACT THE DATA from 
+        //check array of editors if it has id property 
+        //if there is then add to a new array of ids
+        //if none get userIds then append to the created array of ids
+        let existuserids = [];
+        let newusers =[];
+        let newuserids = [];
+        for (let ed of this.state.Editors) {
+          if(ed.id){
+            existuserids.push(ed.id);
+          } else {
+            newusers.push(ed);
+            let userwithIds = await this.props.actionHandler.getUserIds(newusers);
+            newuserids = userwithIds.map(u => u.Id);
+            console.log(newuserids, "IDS");
+          }
+       }
+        let updatedEditorIds = [...existuserids, ...newuserids];
+        console.log(updatedEditorIds);
+        
         let divisionGroupName = this.state.divisionName + " Editors";
         const formData: IQnAMaster = {
           Id: this.state.Id,
           division: this.state.division,
           divisionQnAListName: this.state.divisionQnAListName,
-          Editors: ids
+          Editors: updatedEditorIds
         };
 
         

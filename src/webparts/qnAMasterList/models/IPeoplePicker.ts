@@ -8,6 +8,7 @@ export interface IUserEntityData {
     MobilePhone?: string;
     OtherMails?: string;
     Department?: string;
+    LoginName?: string;
 }
 
 export interface IClientPeoplePickerSearchUser {
@@ -53,15 +54,18 @@ export class SharePointUserPersona implements IPersona {
         this.tertiaryText = user.EntityData.Department;
         this.imageShouldFadeIn = true;
         this.imageUrl = `/_layouts/15/userphoto.aspx?size=S&accountname=${this.User.Key.substr(this.User.Key.lastIndexOf('|') + 1)}`;
+        this.loginName = user.Key;
     }
 
     constructor(user: IEnsurableSharePointUser) {
         this.User = user;
     }
 
+    public id: string;
     public primaryText: string;
     public secondaryText: string;
     public tertiaryText: string;
     public imageUrl: string;
     public imageShouldFadeIn: boolean;
+    public loginName: string;
 }
