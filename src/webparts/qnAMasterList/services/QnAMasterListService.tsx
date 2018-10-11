@@ -129,7 +129,7 @@ export class QnAMasterListService  implements IQnAMasterListService {
     public createListFields(listname: string): Promise<any>{
         
         return sp.web.lists.getByTitle(listname).fields.addMultilineText("Questions",6,false,false,false,false)
-        .then(() => sp.web.lists.getByTitle(listname).fields.addMultilineText("Answers",5,false,false,false,false))
+        .then(() => sp.web.lists.getByTitle(listname).fields.addMultilineText("Answer",5,false,false,false,false))
         .then(() => sp.web.lists.getByTitle(listname).fields.addChoice("Classification",["Public", "Staff", "Student"],6,true))
         .then(() => sp.web.lists.getByTitle(listname).fields.addText("QnAID",255))
         .then(() => sp.web.lists.getByTitle(listname).fields.addMultilineText("Remarks",5,false,false,false,false));
@@ -139,7 +139,7 @@ export class QnAMasterListService  implements IQnAMasterListService {
     public addFieldsToView(listname: string): Promise<any>{ //, fieldsToAdd: any[]
 
         return sp.web.lists.getByTitle(listname).defaultView.fields.add("Questions")
-        .then(() => sp.web.lists.getByTitle(listname).defaultView.fields.add("Answers"))
+        .then(() => sp.web.lists.getByTitle(listname).defaultView.fields.add("Answer"))
         .then(()=> sp.web.lists.getByTitle(listname).defaultView.fields.add("Classification"))
         .then(()=> sp.web.lists.getByTitle(listname).defaultView.fields.add("QnAID"))
         .then(()=> sp.web.lists.getByTitle(listname).defaultView.fields.add("Remarks"))
