@@ -99,6 +99,29 @@ export class QnAMasterListService  implements IQnAMasterListService {
         //return resp;
     }
 
+    public getUserIdsEdit(userInfo: any[]): Promise<any> {
+        //let promises = [];
+        //Issue with editing since the edited item does not return the login name.
+        let resp;
+        let promises = userInfo.map( u => {
+            console.log(u);
+            return sp.web.siteUsers.getByLoginName(u.loginName).get().then(); //res => {
+              //  return res.Id;   
+            //});
+        });
+
+        return Promise.all(promises)
+        .then(res => {
+            console.log(res);
+           return  res;
+        })
+        .catch(err => { 
+            return err; 
+        });
+
+        //return resp;
+    }
+
     public getAllDivisionLists(): Promise<any>{
         return sp.web.lists.select("Title").get().then(lists => {
             console.log(lists);

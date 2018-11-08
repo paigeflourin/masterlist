@@ -32,6 +32,12 @@ export class QnAActionHandler {
         let res = await this.service.getUserIds(userInfo);
         return res;
     }
+
+    public async getUserIdsEdit(userInfo: any[]):Promise<any>{
+        let res = await this.service.getUserIdsEdit(userInfo);
+        return res;
+    }
+
     public async getAllDivisionLists():Promise<any>{
         let res = await this.service.getAllDivisionLists();
         return res;

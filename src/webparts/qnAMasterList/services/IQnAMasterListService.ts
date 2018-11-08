@@ -6,6 +6,7 @@ export interface IQnAMasterListService {
     saveMasterItemtoSPList: (masterListName: string, itemDetailds: IQnAMaster) => Promise<any>;
     updateMasterItemstoSPList:(masterListName: string, itemId: number,  userIds: any[])=> Promise<any>;
     getUserIds:(userInfo: any[]) => Promise<any>;
+    getUserIdsEdit:(userInfo: any[]) => Promise<any>;
     getAllDivisionLists: () => Promise<any>;
     getAllSharePointGroups: () => Promise<any>;
     createDivisionList: (qnaListName: string) => Promise<any>;

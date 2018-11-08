@@ -62,6 +62,7 @@ export class SharePointUserPersona implements IPersona {
     }
 
     public id: string;
+    public email: string;
     public primaryText: string;
     public secondaryText: string;
     public tertiaryText: string;

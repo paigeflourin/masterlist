@@ -126,6 +126,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
               const groupInfo =   await this.props.actionHandler.createSharePointGroup(divisionGroupName);
               console.log(groupInfo, "in group creation");
               const afterAdd =    await this.props.actionHandler.addUsersToSPGroup(groupInfo.data.Title,userwithIds);
+              console.log(afterAdd, "users added to group");
               const afterBreak =  await this.props.actionHandler.breakListPermission(this.state.divisionQnAListName);
               const admin =       await this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,faqAdminGrpid,fullControlPermission);
               const last =        await this.props.actionHandler.addGroupToList(this.state.divisionQnAListName,groupInfo.data.Id,contributePermission);
@@ -149,14 +150,33 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
           }
       } else {
         console.log("EDIT", this.state.Editors);
-
-        //TODO NEED TO EXTRACT THE DATA from 
         //check array of editors if it has id property 
         //if there is then add to a new array of ids
         //if none get userIds then append to the created array of ids
         let existuserids = [];
         let newusers =[];
         let newuserids = [];
+
+        //create a new array with users add loginname to existing items
+        let updatedEditors = this.state.Editors.filter( u => {
+          if (u.id) {
+             u["loginName"] = "i:0#.f|membership|" + u.email;
+             console.log(u);
+             return u;
+          }
+        })
+        let newleyEnteredUsers = this.state.Editors.filter( u => {
+          if (!u.id){
+            return u;
+          }
+        })
+        
+        let NewEds = await this.props.actionHandler.getUserIdsEdit(updatedEditors);
+        let NewAddedEds = await this.props.actionHandler.getUserIds(newleyEnteredUsers);
+        let NewUpdatedEds = [...NewEds, ...NewAddedEds];
+        console.log(NewUpdatedEds, "UPDATED EDITORS");
+
+
         for (let ed of this.state.Editors) {
           if(ed.id){
             existuserids.push(parseInt(ed.id));
@@ -184,7 +204,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
           console.log(groupUsers, "in getgroupusers");
           const res2 =        await this.props.actionHandler.removeusersFromGroup(divisionGroupName,groupUsers);
           console.log(res2, "after user removal!");
-          const addUsers =        await this.props.actionHandler.addUsersToSPGroup(divisionGroupName,groupUsers);
+          const addUsers =        await this.props.actionHandler.addUsersToSPGroup(divisionGroupName,NewUpdatedEds);
           console.log(addUsers, "after add users!");
           const saveItem =        await this.props.actionHandler.updateMasterItemstoSPList(this.props.masterListName,formData.Id,formData.Editors);
           toast.success("Successfully saved Item");
