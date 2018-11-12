@@ -279,7 +279,7 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
                    onChange={(value) => this.updateEditorsState(value)}
                 /> }
   
-                <PrimaryButton text="Sumbit" onClick={this.onSaveClick} />
+                <PrimaryButton text="Submit" onClick={this.onSaveClick} />
                 <PrimaryButton text="Cancel" onClick={() => this.props.onCancel(null)} />
 
           </div>
