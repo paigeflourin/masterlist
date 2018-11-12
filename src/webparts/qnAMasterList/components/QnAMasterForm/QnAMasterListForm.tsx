@@ -164,12 +164,12 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
              console.log(u);
              return u;
           }
-        })
+        });
         let newleyEnteredUsers = this.state.Editors.filter( u => {
           if (!u.id){
             return u;
           }
-        })
+        });
         
         let NewEds = await this.props.actionHandler.getUserIdsEdit(updatedEditors);
         let NewAddedEds = await this.props.actionHandler.getUserIds(newleyEnteredUsers);
