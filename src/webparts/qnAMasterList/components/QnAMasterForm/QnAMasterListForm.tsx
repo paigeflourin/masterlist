@@ -278,10 +278,10 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
                    selectedItems={this.state.Editors}
                    onChange={(value) => this.updateEditorsState(value)}
                 /> }
-  
+              <div className={styles.controlBtns}> 
                 <PrimaryButton text="Submit" onClick={this.onSaveClick} />
                 <PrimaryButton text="Cancel" onClick={() => this.props.onCancel(null)} />
-
+              </div>
           </div>
         </div>
       );
@@ -296,7 +296,8 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
                 <TaxonomyPicker
                   allowMultipleSelections={false}
                   //termsetNameOrID="9a72c139-d649-4342-970f-a53fe0ef72e3"
-                  termsetNameOrID="Department"
+                  //termsetNameOrID="Department"
+                  termsetNameOrID="6c285b4d-49f9-4666-981d-2b7be6872978"
                   panelTitle="Select Term"
                   label="Division Picker"
                   context={this.props.context}
@@ -320,8 +321,11 @@ export class QnAMasterListForm extends React.Component<IQnAMasterListFormProps, 
                    onChange={(value) => this.updateEditorsState(value)}
                 /> }
   
-                <PrimaryButton text="Submit" onClick={this.onSaveClick} />
-                <PrimaryButton text="Cancel" onClick={() => this.props.onCancel(null)} />
+                <div className={styles.controlBtns}> 
+                  <PrimaryButton text="Submit" onClick={this.onSaveClick} />
+                  <PrimaryButton text="Cancel" onClick={() => this.props.onCancel(null)} />
+                </div>
+                
           </div>
         </div>
       );

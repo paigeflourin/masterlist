@@ -114,7 +114,7 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
         <div className={ styles.container }>
           
         <ToastContainer />
-        <h1>QnA Master List</h1> 
+        {/* <h1>QnA Master List</h1>  */}
          {console.log(this.state.showForm, "show form ")}
           {this.state.showForm ? ( 
             <QnAMasterListForm context={this.props.context} 
@@ -125,10 +125,13 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
               editItem={this.state.editItem}/>
            ) : (
             <div> 
-              <PrimaryButton 
-                  text="Add QnA Master List Item" 
-                  onClick={() => this.toggleFormView(true)} 
-              />
+              <div className={styles.addNewBtn}>
+                <PrimaryButton 
+                    text="Add QnA Master List Item" 
+                    onClick={() => this.toggleFormView(true)} 
+                />
+              </div>
+             
               <QnAMasterListView masterListItems={this.state.masterListItems} 
               changeView={this.changeView} 
               actionHandler={this.actionHandler} 

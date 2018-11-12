@@ -22,7 +22,7 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
   }
 
   public componentWillReceiveProps(newProps): void {
-    console.log("INSIDE WILL RECEIVE PROPS", newProps);
+    //console.log("INSIDE WILL RECEIVE PROPS", newProps);
     this.setState({
       isLoading: true
     });
@@ -41,7 +41,7 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
   }
 
   public async componentDidMount(): Promise<void> {
-    console.log("inside component did mount");
+    //console.log("inside component did mount");
     // this.setState({
     //   masterListItems: await this.actionHandler.getAllMasterListItems(),
     //     isDataLoaded: true,
