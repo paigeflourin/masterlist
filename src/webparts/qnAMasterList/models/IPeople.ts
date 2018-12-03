@@ -7,6 +7,7 @@ interface IPeople extends IPersonaProps {
     Email?: string;
     IsSiteAdmin?: boolean;
     PictureUrl?: string;
+    LoginName?: string;
 }
 
 export default IPeople;

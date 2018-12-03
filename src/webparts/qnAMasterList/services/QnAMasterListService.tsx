@@ -105,7 +105,8 @@ export class QnAMasterListService  implements IQnAMasterListService {
         let resp;
         let promises = userInfo.map( u => {
             console.log(u);
-            return sp.web.siteUsers.getByLoginName(u.loginName).get().then(); //res => {
+            //return sp.web.siteUsers.getByLoginName(u.loginName).get().then(); //res => {
+            return sp.web.siteUsers.getById(u.id).get().then();
               //  return res.Id;   
             //});
         });

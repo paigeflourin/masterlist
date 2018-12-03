@@ -69,4 +69,5 @@ export class SharePointUserPersona implements IPersona {
     public imageUrl: string;
     public imageShouldFadeIn: boolean;
     public loginName: string;
+    public description: string;
 }
