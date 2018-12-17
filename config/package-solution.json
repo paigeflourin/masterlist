@@ -3,7 +3,7 @@
   "solution": {
     "name": "QnA Master List",
     "id": "bcae6f25-c4c5-48b7-bd6b-53cf72b6d602",
-    "version": "1.0.0.8",
+    "version": "1.0.0.9",
     "includeClientSideAssets": true
   },
   "paths": {

@@ -157,7 +157,8 @@ export class QnAMasterListService  implements IQnAMasterListService {
         .then(() => sp.web.lists.getByTitle(listname).fields.addMultilineText("Answer",5,true,false,false,true))
         .then(() => sp.web.lists.getByTitle(listname).fields.addChoice("Classification",["Public", "Staff", "Student"],6,true))
         .then(() => sp.web.lists.getByTitle(listname).fields.addNumber("QnAID",0))
-        .then(() => sp.web.lists.getByTitle(listname).fields.addMultilineText("Remarks",5,false,false,false,false));
+        .then(() => sp.web.lists.getByTitle(listname).fields.addMultilineText("Remarks",5,false,false,false,false))
+        .then(() => sp.web.lists.getByTitle(listname).fields.addText("Rating",255));
     }
 
 
@@ -168,6 +169,7 @@ export class QnAMasterListService  implements IQnAMasterListService {
         .then(()=> sp.web.lists.getByTitle(listname).defaultView.fields.add("Classification"))
         .then(()=> sp.web.lists.getByTitle(listname).defaultView.fields.add("QnAID"))
         .then(()=> sp.web.lists.getByTitle(listname).defaultView.fields.add("Remarks"))
+        .then(()=> sp.web.lists.getByTitle(listname).defaultView.fields.add("Rating"))
         .catch(err=>{
             return err;
         });
