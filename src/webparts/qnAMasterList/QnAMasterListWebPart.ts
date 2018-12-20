@@ -1,3 +1,7 @@
+import "@pnp/polyfill-ie11";
+import 'es6-promise';
+import 'core-js/es6/array';
+import 'core-js/es6/number';
 import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version } from '@microsoft/sp-core-library';
