@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styles from './QnAMasterListView.module.scss';
 import { IQnAMasterListViewProps, IQnAMasterListViewState } from './IQnAMasterListViewProps';
-import { DefaultButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
+import { PrimaryButton, DefaultButton, IButtonProps } from 'office-ui-fabric-react/lib/Button';
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { QnAMasterListForm } from '../QnAMasterForm/QnAMasterListForm';
@@ -122,7 +122,7 @@ export class QnAMasterListView extends React.Component<IQnAMasterListViewProps, 
                       accessor: "newQuestionsActions",
                       Cell: ({ row }) => (
                         <div>
-                           <DefaultButton
+                           <PrimaryButton
                               data-automation-id="test"
                               text="EDIT"
                               onClick={() => this.props.onEditItem({row})}
