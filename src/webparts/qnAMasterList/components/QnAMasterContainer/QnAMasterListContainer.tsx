@@ -127,7 +127,7 @@ export class QnAMasterListContainer extends React.Component<IQnAMasterListContai
             <div> 
               <div className={styles.addNewBtn}>
                 <PrimaryButton 
-                    text="Add QnA Master List Item" 
+                    text="Add Division" 
                     onClick={() => this.toggleFormView(true)} 
                 />
               </div>
